@@ -1,0 +1,11 @@
+---
+- hosts: localhost 
+  gather_facts: yes
+
+  vars:
+   openSoundID_directory: /home/opensoundid
+
+  roles:
+   - { role: install-opensoundid, become: yes }
+
+

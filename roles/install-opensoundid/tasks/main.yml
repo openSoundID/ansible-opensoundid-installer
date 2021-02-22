@@ -1,0 +1,259 @@
+---
+
+- name: Install the latest version of Java 11
+  yum:
+    name: java-11-openjdk-devel
+    state: latest
+
+- name: Install the latest version of Maven
+  yum:
+    name: maven
+    state: latest
+
+- name: Install the latest version of ffmpeg
+  yum:
+    name: ffmpeg
+    state: latest
+
+- name: Install the latest version of sox
+  yum:
+    name: sox
+    state: latest
+
+- pip:
+    name: essentia
+    version: 2.1b6.dev234
+
+- pip:
+    name: xeno-canto
+    version: 2.0.1
+
+- name: Add the group opensoundid
+  group:
+    name: opensoundid
+    state: present
+
+- name: Add the user opensoundid
+  user:
+    name: opensoundid
+    comment: OpenSoundID
+    shell: /bin/bash
+
+- name: check that bin directory exists
+  file:
+    path: "{{ openSoundID_directory }}/bin"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that database directory exists
+  file:
+    path: "{{ openSoundID_directory }}/database"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that inventory directory exists
+  file:
+    path: "{{ openSoundID_directory }}/inventory"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+  
+- name: check that lib directory exists
+  file:
+    path: "{{ openSoundID_directory }}/lib"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that logs directory exists
+  file:
+    path: "{{ openSoundID_directory }}/logs"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that model directory exists
+  file:
+    path: "{{ openSoundID_directory }}/model"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that properties directory exists
+  file:
+    path: "{{ openSoundID_directory }}/properties"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that ansible directory exists
+  file:
+    path: "{{ openSoundID_directory }}/ansible"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that metadataRepository directory exists
+  file:
+    path: "{{ openSoundID_directory }}/metadataRepository"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that training Download directory exists
+  file:
+    path: "{{ openSoundID_directory }}/dataset/training/DownloadDirectory"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that training WAV  directory exists
+  file:
+    path: "{{ openSoundID_directory }}/dataset/training/WAVDirectory"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that training JSON  directory exists
+  file:
+    path: "{{ openSoundID_directory }}/dataset/training/JSONDirectory"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that test-xcalso Download directory exists
+  file:
+    path: "{{ openSoundID_directory }}/dataset/test-xcalso/DownloadDirectory"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that test-xcalso WAV  directory exists
+  file:
+    path: "{{ openSoundID_directory }}/dataset/test-xcalso/WAVDirectory"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that test-xcalso JSON  directory exists
+  file:
+    path: "{{ openSoundID_directory }}/dataset/test-xcalso/JSONDirectory"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that soundAnalyzer recordDirectory  directory exists
+  file:
+    path: "{{ openSoundID_directory }}/soundAnalyzer/recordDirectory"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that training noises  directory exists
+  file:
+    path: "{{ openSoundID_directory }}/noises"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that results dataset directory exists
+  file:
+    path: "{{ openSoundID_directory }}/dataset/results"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: Copy noise file
+  copy:
+    src: noises/noise.wav
+    dest: "{{ openSoundID_directory }}/noises/noise.wav"
+    owner: opensoundid
+    group: opensoundid
+
+- name: Copy create.sql
+  copy:
+    src: database/create.sql
+    dest: "{{ openSoundID_directory }}/database/create.sql"
+    owner: opensoundid
+    group: opensoundid
+
+- name: Copy H2 database jar
+  copy:
+    src: lib/h2-1.4.200.jar
+    dest: "{{ openSoundID_directory }}/lib/h2-1.4.200.jar"
+    owner: opensoundid
+    group: opensoundid
+
+- name: Template opensoudid properties files to properties
+  template:
+    src: opensoundid.properties.j2
+    dest: "{{ openSoundID_directory }}/properties/opensoundid.properties"
+    owner: opensoundid
+    group: opensoundid
+
+- name: Template log properties files to properties
+  template:
+    src: log4j2.properties.j2
+    dest: "{{ openSoundID_directory }}/properties/log4j2.properties"
+    owner: opensoundid
+    group: opensoundid
+
+- name: Template compute.sh files to bin
+  template:
+    src: compute.sh.j2
+    dest: "{{ openSoundID_directory }}/bin/compute.sh"
+    owner: opensoundid
+    group: opensoundid
+    mode: '0744'
+
+- name: Template createdatabase.sh files to bin
+  template:
+    src: createdatabase.sh.j2
+    dest: "{{ openSoundID_directory }}/bin/createdatabase.sh"
+    owner: opensoundid
+    group: opensoundid
+    mode: '0744'
+
+- name: Git checkout ansible-retrieve-metadata repository
+  git:
+    repo: 'https://github.com/openSoundID/ansible-retrieve-metadata.git'
+    dest: "{{ openSoundID_directory }}/ansible/ansible-retrieve-metadata"
+
+- name: adjust right on directory
+  file:
+    path: "{{ openSoundID_directory }}/ansible/ansible-retrieve-metadata"
+    state: directory
+    recurse: true
+    owner: opensoundid
+    group: opensoundid
+
+- name: Git checkout ansible-make-datasets repository
+  git:
+    repo: 'https://github.com/openSoundID/ansible-make-datasets.git'
+    dest: "{{ openSoundID_directory }}/ansible/ansible-make-datasets"
+
+- name: adjust right on directory
+  file:
+    path: "{{ openSoundID_directory }}/ansible/ansible-make-datasets"
+    state: directory
+    recurse: true
+    owner: opensoundid
+    group: opensoundid
+
+- name: Git checkout engine repository
+  git:
+    repo: 'https://github.com/openSoundID/Engine.git'
+    dest: "{{ openSoundID_directory }}/javasrc/Engine"
+
+- name: adjust right on directory
+  file:
+    path: "{{ openSoundID_directory }}/javasrc/Engine"
+    state: directory
+    recurse: true
+    owner: opensoundid
+    group: opensoundid
+
+
+

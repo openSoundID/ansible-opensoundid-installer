@@ -1,0 +1,136 @@
+#dsp
+dsp.numFeatures=8
+dsp.filterBankNumFilters=44
+dsp.maxAggSize=34
+dsp.deltaN=5
+dsp.pooling.percentileHigh=90.0
+dsp.pooling.percentileLow=15.0
+dsp.deltaOptimizePeakIndice=5
+dsp.peakAmplitudePercentile=64.0
+dsp.peakMinSequences=1
+dsp.melSpectraNormalisation.percentile=15.0
+
+#ansible
+ansible.birds_list={{ openSoundID_directory }}/properties/birds_list.yml
+ansible.metadataRepository={{ openSoundID_directory }}/metadataRepository
+ansible.populateSQLFile={{ openSoundID_directory }}/Signature-2.0/database/populate_birds.sql
+
+ansible.mp3towav.sox.highpass=1000
+ansible.mp3towav.sox.normdb=-6
+ansible.mp3towav.sox.rate=16000
+ansible.mp3towav.sox.bitsnumber=16
+ansible.mp3towav.ffmpeg.noisevolume=0.55
+ansible.mp3towav.sox.denoise.level=0.4
+ansible.mp3towav.ffmpeg.noiseloop=999
+ansible.mp3towav.ffmpeg.noise_wav_file={{ openSoundID_directory }}/noises/noise.wav
+ansible.essentia.windowtype=hann
+ansible.essentia.spectrumsize=1024
+ansible.essentia.lowfrequencybound=1000
+ansible.essentia.highfrequencybound=8000
+ansible.essentia.framesize=1024
+ansible.essentia.hopsize=512
+ansible.essentia.samplerate=16000
+ansible.essentia.mfcc.normalize=unit_sum
+ansible.essentia.mfcc.warpingFormula=slaneyMel
+ansible.essentia.mfcc.weighting=warping
+ansible.essentia.mfcc.numberbands=44
+ansible.essentia.envelope.attackTime=0
+ansible.essentia.envelope.releaseTime=5
+ansible.essentia.averagedenvelope.percentile=10.0
+ansible.essentia.envelope.hopsize=512
+ansible.essentia.logNorm.type=log
+ansible.essentia.PeakDetection.maxPeaks=200
+ansible.essentia.PeakDetection.threshold=0.04
+ansible.essentia.PeakDetection.maxAggSize=34
+ansible.essentia.PeakDetection.minPosition=20
+ansible.essentia.PeakDetection.maxPosition=21
+
+#ansible Training dataset
+ansible.rec_download_directory={{ openSoundID_directory }}/dataset/training/DownloadDirectory
+ansible.rec_wav_directory={{ openSoundID_directory }}/dataset/training/WAVDirectory
+ansible.rec_json_directory={{ openSoundID_directory }}/dataset/training/JSONDirectory
+
+#ansible Also dataset
+ansible.alsodataset_rec_download_directory={{ openSoundID_directory }}/dataset/test-xcalso/DownloadDirectory
+ansible.alsodataset_rec_wav_directory={{ openSoundID_directory }}/dataset/test-xcalso/WAVDirectory
+ansible.alsodataset_rec_json_directory={{ openSoundID_directory }}/dataset/test-xcalso/JSONDirectory
+
+#SoundAnalyzer
+soundAnalyzer.recordDirectory={{ openSoundID_directory }}/soundAnalyzer/recordDirectory
+SoundAnalyzer.endFile=/tmp/endSoundAnalyzer.txt
+SoundAnalyzer.dateFormat=HH:mm:ss
+SoundAnalyzer.analyzeLastFileOnly=true
+
+#Optimization
+optimization.dataDirectory={{ openSoundID_directory }}/testOptimization
+
+#ScoreAnalyzer
+engine.ScoreAnalyzer.defaultScoreThreshold=10
+engine.ScoreAnalyzer.specificScoreThreshold.1000=1
+engine.ScoreAnalyzer.specificScoreThreshold.10000=1
+engine.ScoreAnalyzer.specificScoreThreshold.0=1000000
+
+#ResultSender
+ResultSender.enable=false
+ResultSender.RestUrl=http://localhost:8080/birdsongcache/rest/rest/birdsObservations
+
+#Classification
+classification.rotationForest.NumExecutionSlots={{ ansible_processor_vcpus }}
+classification.rotationForest.MaxGroup=3
+classification.rotationForest.MinGroup=3
+classification.rotationForest.NumIterations=200
+classification.principalComponents.varianceCovered=1.0
+classification.trainingDirectory={{ openSoundID_directory }}/dataset/results
+classification.modelFileName={{ openSoundID_directory }}/Signature-2.0/model/rotationforest.model
+
+
+#ScoreLogger
+scoreLogger.savePath={{ openSoundID_directory }}/testEngine/score.csv
+
+#Engine
+engine.percentile=0.1
+engine.threshold=10
+engine.Engine.signatureDirectory={{ openSoundID_directory }}/Signature-2.0/signatures
+engine.ScoreFiltrer.maxResult=2
+
+#features specifications
+featuresSpecifications.yaml_data_file={{ openSoundID_directory }}/Signature-2.0/properties/birds_list.yml
+
+#features
+features.featuresNumber=2000
+feature.numberOfMetadataFeatures=2
+features.jsonDirectory={{ openSoundID_directory }}/dataset/training/JSONDirectory
+features.alsoJsonDirectory={{ openSoundID_directory }}/dataset/test-xcalso/JSONDirectory
+features.featuresDirectory={{ openSoundID_directory }}/dataset/training/FeaturesDirectory
+features.alsoFeaturesDirectory={{ openSoundID_directory }}/dataset/test-xcalso/FeaturesDirectory
+features.arffTrainingFiles={{ openSoundID_directory }}/dataset/results/training.arff
+features.arffTestFiles={{ openSoundID_directory }}/dataset/results/test.arff
+features.subSampleArffTestFiles={{ openSoundID_directory }}/dataset/results/test-200.arff
+features.subSampleArffTestMaxCount=200
+features.arffTestAlsoFiles={{ openSoundID_directory }}/dataset/results/testalso.arff
+features.subSampleArffTestAlsoFiles={{ openSoundID_directory }}/dataset/results/testalso-500.arff
+features.subSampleArffTestAlsoMaxCount=500
+features.trainingSizePct=2
+features.spreadSubsampleFactor=2.0
+features.removeMisclassified.rotationForest.NumExecutionSlots={{ ansible_processor_vcpus }}
+features.removeMisclassified.rotationForest.MaxGroup=3
+features.removeMisclassified.rotationForest.MinGroup=3
+features.removeMisclassified.rotationForest.NumIterations=100
+features.removeMisclassified.principalComponents.varianceCovered=1.0
+
+#jsonToDB
+jsontodb.databaseurl=jdbc:h2:file:{{ openSoundID_directory }}/Signature-2.0/database/opensoundid
+
+#Inventory
+inventory.trainingInventoryFile={{ openSoundID_directory }}/inventory/training_inventory.yml
+inventory.testInventoryFile={{ openSoundID_directory }}/inventory/test_inventory.yml
+inventory.excludedKeyword=mimicry, imitation, mimicries
+Inventory.databaseurl=jdbc:h2:file:{{ openSoundID_directory }}/Signature-2.0/database/opensoundid
+
+#Noise Records
+noiseRecords.recordsDirectory={{ openSoundID_directory }}/dataset/training/noises
+
+#XenoCanto Records
+XenoCantoRecords.jsonDirectory={{ openSoundID_directory }}/metadataRepository
+
+

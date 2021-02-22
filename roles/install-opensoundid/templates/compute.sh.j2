@@ -1,0 +1,70 @@
+#!/bin/bash
+
+set -e
+
+TMPDIR=$(mktemp -d);
+ROOT_DIR={{ openSoundID_directory }}/
+ANSIBLE_DIR={{ openSoundID_directory }}/ansible
+
+RESULT_DIR={{ openSoundID_directory }}/resultats$(date '+%Y-%m-%d-%H:%M:%S')
+mkdir -p ${RESULT_DIR}
+
+cd ${ROOT_DIR}
+
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+pushd  {{ openSoundID_directory }}/javasrc/Engine
+mvn -DskipTests install
+popd
+
+cp {{ openSoundID_directory }}/javasrc/Engine/export/engine-1.0.0-SNAPSHOT.jar lib/
+
+#create database
+./bin/createdatabase.sh
+
+#download metadata and make database file
+#pushd  ${ANSIBLE_DIR}/ansible-retrieve-metadata
+#ansible-playbook playbook-retrieve-metadata.yml -e root_dir=${ROOT_DIR}
+#popd
+
+#populate database
+#java -classpath lib/h2*.jar org.h2.tools.RunScript -url jdbc:h2:file:./database/xeno-canto -script ./database/populate_birds.sql
+
+#json metadata to database
+#java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.xenocanto.XenoCantoRecord
+
+#iInsert Noise records to database
+#java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.noise.NoiseRecords
+
+#make inventory File
+#java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.ml.Inventory
+
+#rm -f {{ openSoundID_directory }}/JSONDirectory/*.json
+#rm -f {{ openSoundID_directory }}/FeaturesDirectory/*.arff
+#rm -f {{ openSoundID_directory }}/WAVDirectory/*.wav
+#rm -f {{ openSoundID_directory }}/dataset/AlsoDataSetJSONDirectory/*.json
+#rm -f {{ openSoundID_directory }}/dataset/AlsoDataSetFeaturesDirectory/*.arff
+#rm -f {{ openSoundID_directory }}/dataset/AlsoDataSetWAVDirectory/*.wav
+
+#cp {{ openSoundID_directory }}/Signature-2.0/properties/opensoundid.properties ${RESULT_DIR}
+#cp {{ openSoundID_directory }}/Signature-2.0/bin/audiotofeatures.py ${RESULT_DIR}
+
+
+#download wave file and make dataset for training dataset
+#pushd  ${ANSIBLE_DIR}/ansible-make-datasets
+#ansible-playbook playbook-make-training-datasets.yml -e root_dir=${ROOT_DIR}
+#popd
+
+#download wave file and make dataset file for test dataset
+#pushd  ${ANSIBLE_DIR}/ansible-make-datasets
+#ansible-playbook playbook-make-test-datasets.yml -e root_dir=${ROOT_DIR}
+#popd
+
+wait < <(jobs -p)
+
+#java -Xmx16g -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.Features
+
+#rm {{ openSoundID_directory }}/Signature-2.0/model/*.model
+#cp {{ openSoundID_directory }}/TrainingDirectory/test-200.arff {{ openSoundID_directory }}/TrainingDirectory/testalso-500.arff $TMPDIR
+#java -Xmx16g -classpath "lib/mtj.jar:lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.Classification --arffTestDirectory=$TMPDIR
+#cp {{ openSoundID_directory }}/Signature-2.0/logs/SoundAnalyzer.log ${RESULT_DIR}
+#rm -rf $TMPDIR
