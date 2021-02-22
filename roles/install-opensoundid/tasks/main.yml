@@ -181,6 +181,13 @@
     owner: opensoundid
     group: opensoundid
 
+- name: Copy populate_birds.sql
+  copy:
+    src: database/populate_birds.sql
+    dest: "{{ openSoundID_directory }}/database/populate_birds.sql"
+    owner: opensoundid
+    group: opensoundid
+
 - name: Copy create.sql
   copy:
     src: database/create.sql
