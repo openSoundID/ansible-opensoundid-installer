@@ -20,20 +20,22 @@
     name: sox
     state: latest
     
-- name: Install the latest version of python2-pip
+- name: Install the latest version of python3-pip
   yum:
-    name: python2-pip
+    name: python3-pip
     state: latest
 
 - name: Install essentia with pip 
   pip:
     name: essentia
     version: 2.1b6.dev234
+    executable: pip-3.6
 
 - name: Install xeno-canto with pip 
   pip:
     name: xeno-canto
     version: 2.0.1
+    executable: pip-3.6
 
 - name: Add the group opensoundid
   group:
