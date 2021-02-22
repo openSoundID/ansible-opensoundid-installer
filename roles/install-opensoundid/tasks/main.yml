@@ -22,7 +22,7 @@
     
 - name: Install the latest version of python2-pip
   yum:
-    name: python3-pip
+    name: python2-pip
     state: latest
 
 - name: Install essentia with pip 
