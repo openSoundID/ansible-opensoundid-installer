@@ -20,7 +20,7 @@
     name: sox
     state: latest
     
-- name: Install the latest version of python3-pip
+- name: Install the latest version of python2-pip
   yum:
     name: python3-pip
     state: latest
