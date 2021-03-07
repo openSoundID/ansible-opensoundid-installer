@@ -19,6 +19,13 @@
   yum:
     name: sox
     state: latest
+
+- name: Install sox-plugins-freeworld
+  yum:
+    name: sox-plugins-freeworld
+    state: latest
+  when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
+          (ansible_distribution_major_version == "7") 
     
 - name: Install the latest version of python3-pip
   yum:
@@ -37,6 +44,12 @@
     version: 2.0.1
     executable: pip-3
 
+- name: Install scipy with pip 
+  pip:
+    name: scipy
+    version: 1.5.4
+    executable: pip-3
+
 - name: Add the group opensoundid
   group:
     name: opensoundid
@@ -45,8 +58,24 @@
 - name: Add the user opensoundid
   user:
     name: opensoundid
+    group: opensoundid
     comment: OpenSoundID
     shell: /bin/bash
+
+- name: Add or modify soft and hard limit for the user opensoundid 
+  pam_limits:
+    domain: opensoundid
+    limit_type: '-'
+    limit_item: nofile
+    value: unlimited
+    comment: unlimited nofile for user opensoundid
+
+- name: check that results directory exists
+  file:
+    path: "{{ openSoundID_directory }}/results"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
 
 - name: check that bin directory exists
   file:
@@ -132,6 +161,13 @@
     owner: opensoundid
     group: opensoundid
 
+- name: check that training noises directory exists
+  file:
+    path: "{{ openSoundID_directory }}/dataset/training/noises"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
 - name: check that test-xcalso Download directory exists
   file:
     path: "{{ openSoundID_directory }}/dataset/test-xcalso/DownloadDirectory"
@@ -160,7 +196,7 @@
     owner: opensoundid
     group: opensoundid
 
-- name: check that training noises  directory exists
+- name: check that noises directory exists
   file:
     path: "{{ openSoundID_directory }}/noises"
     state: directory
@@ -199,6 +235,13 @@
   copy:
     src: lib/h2-1.4.200.jar
     dest: "{{ openSoundID_directory }}/lib/h2-1.4.200.jar"
+    owner: opensoundid
+    group: opensoundid
+
+- name: Copy mtj.jar
+  copy:
+    src: lib/mtj.jar
+    dest: "{{ openSoundID_directory }}/lib/mtj.jar"
     owner: opensoundid
     group: opensoundid
 
@@ -271,5 +314,42 @@
     owner: opensoundid
     group: opensoundid
 
+- name: "Extract mitogen-0.2.9.tar.gz into {{ openSoundID_directory }}/ansible"
+  unarchive:
+    src: mitogen/mitogen-0.2.9.tar.gz
+    dest: "{{ openSoundID_directory }}/ansible"
+    owner: opensoundid
+    group: opensoundid
 
+- name: Template ansible.cfg files ansible-retrieve-metadata
+  template:
+    src: ansible.cfg.j2
+    dest: "{{ openSoundID_directory }}/ansible/ansible-retrieve-metadata/ansible.cfg"
+    owner: opensoundid
+    group: opensoundid
+    mode: '0744'
+
+- name: Template ansible.cfg files ansible-make-datasets
+  template:
+    src: ansible.cfg.j2
+    dest: "{{ openSoundID_directory }}/ansible/ansible-make-datasets/ansible.cfg"
+    owner: opensoundid
+    group: opensoundid
+    mode: '0744'
+
+- name: Create linux service for sound Analyzer
+  template:
+    src: soundAnalyzer.service.j2
+    dest: "/etc/systemd/system/soundAnalyzer.service"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Template soundAnalyzer.sh files to bin
+  template:
+    src: soundAnalyzer.sh.j2
+    dest: "{{ openSoundID_directory }}/bin/soundAnalyzer.sh"
+    owner: opensoundid
+    group: opensoundid
+    mode: '0744'
 

@@ -13,7 +13,7 @@ dsp.melSpectraNormalisation.percentile=15.0
 #ansible
 ansible.birds_list={{ openSoundID_directory }}/properties/birds_list.yml
 ansible.metadataRepository={{ openSoundID_directory }}/metadataRepository
-ansible.populateSQLFile={{ openSoundID_directory }}/Signature-2.0/database/populate_birds.sql
+ansible.populateSQLFile={{ openSoundID_directory }}/database/populate_birds.sql
 
 ansible.mp3towav.sox.highpass=1000
 ansible.mp3towav.sox.normdb=-6
@@ -81,7 +81,7 @@ classification.rotationForest.MinGroup=3
 classification.rotationForest.NumIterations=200
 classification.principalComponents.varianceCovered=1.0
 classification.trainingDirectory={{ openSoundID_directory }}/dataset/results
-classification.modelFileName={{ openSoundID_directory }}/Signature-2.0/model/rotationforest.model
+classification.modelFileName={{ openSoundID_directory }}/model/rotationforest.model
 
 
 #ScoreLogger
@@ -90,11 +90,10 @@ scoreLogger.savePath={{ openSoundID_directory }}/testEngine/score.csv
 #Engine
 engine.percentile=0.1
 engine.threshold=10
-engine.Engine.signatureDirectory={{ openSoundID_directory }}/Signature-2.0/signatures
 engine.ScoreFiltrer.maxResult=2
 
 #features specifications
-featuresSpecifications.yaml_data_file={{ openSoundID_directory }}/Signature-2.0/properties/birds_list.yml
+featuresSpecifications.yaml_data_file={{ openSoundID_directory }}/properties/birds_list.yml
 
 #features
 features.featuresNumber=2000
@@ -119,13 +118,13 @@ features.removeMisclassified.rotationForest.NumIterations=100
 features.removeMisclassified.principalComponents.varianceCovered=1.0
 
 #jsonToDB
-jsontodb.databaseurl=jdbc:h2:file:{{ openSoundID_directory }}/Signature-2.0/database/opensoundid
+jsontodb.databaseurl=jdbc:h2:file:{{ openSoundID_directory }}/database/opensoundid
 
 #Inventory
 inventory.trainingInventoryFile={{ openSoundID_directory }}/inventory/training_inventory.yml
 inventory.testInventoryFile={{ openSoundID_directory }}/inventory/test_inventory.yml
 inventory.excludedKeyword=mimicry, imitation, mimicries
-Inventory.databaseurl=jdbc:h2:file:{{ openSoundID_directory }}/Signature-2.0/database/opensoundid
+Inventory.databaseurl=jdbc:h2:file:{{ openSoundID_directory }}/database/opensoundid
 
 #Noise Records
 noiseRecords.recordsDirectory={{ openSoundID_directory }}/dataset/training/noises

@@ -1,0 +1,13 @@
+[Unit]
+Description=Sound Engine
+After=network.target
+[Service]
+Type=simple
+ExecStart=/home/opensoundid/bin/soundAnalyzer.sh
+WorkingDirectory=/home/opensoundid
+User=opensoundid
+Restart=on-failure
+RestartSec=30
+[Install]
+WantedBy=multi-user.target
+

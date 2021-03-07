@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS Record
  rmk VARCHAR(4096),
  type VARCHAR(250),
  origin VARCHAR(25),
- enable BOOLEAN,
+ enabled BOOLEAN,
  foreign key (bird_id) references Bird(id)
  
  );
