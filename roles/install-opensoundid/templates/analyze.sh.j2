@@ -1,0 +1,32 @@
+#!/bin/bash
+
+function getProperties {
+    grep "${1}" properties/opensoundid.properties|cut -d'=' -f2
+}
+
+set -e
+
+TMPDIR=$(mktemp -d);
+ROOT_DIR={{ openSoundID_directory }}
+
+filenameWithExtension=$(basename -- "$fullfile")
+extension="${filename##*.}"
+filename="${filename%.*}"
+
+cp $1 ${TMPDIR}/${filenameWithExtension}
+/usr/bin/sox -R ${TMPDIR}/${filenameWithExtension} -r $(getProperties 'analyze.sox.rate') -c 1 -b $(getProperties 'analyze.sox.bitsnumber') ${TMPDIR}/${filename}-mono.wav highpass $(getProperties 'analyze.sox.rate') norm $(getProperties 'analyze.sox.normdb')  
+${ROOT_DIR}/bin/extractnoise.py ${TMPDIR}/${filename}-mono.wav ${TMPDIR}/${filename}-noise.wav
+/ur/bin/sox  -R ${TMPDIR}/${filename}-noise.wav -n noiseprof ${filename}/noise_balbucam > /dev/null
+/usr/bin/sox -R ${TMPDIR}/${filename}-mono.wav /tmp/${filename}-mono2.wav noisered ${filename}/noise_balbucam $(getProperties 'analyze.sox.denoise.level') > /dev/null
+
+/usr/bin/ffmpeg -i ${TMPDIR}/${filename}-mono2.wav -filter_complex "amovie=$(getProperties 'analyze.mp3towav.ffmpeg.noise_wav_file'):loop=$(getProperties 'analyze.ffmpeg.noiseloop')[s];[s]volume=$(getProperties 'analyze.ffmpeg.noisevolume')[s1];[0][s1]amix=duration=shortest" ${TMPDIR}/${filename}-mono4.wav -y 
+
+
+${ROOT_DIR}/bin/audiotofeatures.py ${TMPDIR}/${filename}-mono4.wav ${TMPDIR}/${filename}.json 
+touch -t $2 ${TMPDIR}/${filename}.json
+mv ${TMPDIR}/${filename}.json $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.json
+
+while [ ! -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt ]; do sleep 1; done
+cat $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt
+
+

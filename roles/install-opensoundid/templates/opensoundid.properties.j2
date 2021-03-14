@@ -45,6 +45,17 @@ ansible.essentia.PeakDetection.maxAggSize=34
 ansible.essentia.PeakDetection.minPosition=20
 ansible.essentia.PeakDetection.maxPosition=21
 
+#analyze
+analyze.sox.highpass=1000
+analyze.sox.normdb=-6
+analyze.sox.rate=16000
+analyze.sox.bitsnumber=16
+analyze.ffmpeg.noisevolume=0.55
+analyze.sox.denoise.level=0.4
+analyze.ffmpeg.noiseloop=999
+analyze.ffmpeg.noise_wav_file={{ openSoundID_directory }}/noises/noise.wav
+
+
 #ansible Training dataset
 ansible.rec_download_directory={{ openSoundID_directory }}/dataset/training/DownloadDirectory
 ansible.rec_wav_directory={{ openSoundID_directory }}/dataset/training/WAVDirectory

@@ -19,53 +19,52 @@ popd
 cp {{ openSoundID_directory }}/javasrc/Engine/export/engine-1.0.0-SNAPSHOT.jar lib/
 
 #create database
-./bin/createdatabase.sh
+./bin/createDatabase.sh
 
 #download metadata and make database file
-#pushd  ${ANSIBLE_DIR}/ansible-retrieve-metadata
-#ansible-playbook playbook-retrieve-metadata.yml -e root_dir=${ROOT_DIR}
-#popd
+pushd  ${ANSIBLE_DIR}/ansible-retrieve-metadata
+ansible-playbook playbook-retrieve-metadata.yml -e root_dir=${ROOT_DIR}
+popd
 
 #populate database
-#${JAVA_HOME}/bin/java -classpath lib/h2*.jar org.h2.tools.RunScript -url jdbc:h2:file:./database/opensoundid -script ./database/populate_birds.sql
+./bin/populateDatabase.sh
 
 #json metadata to database
-#${JAVA_HOME}/bin/java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.xenocanto.XenoCantoRecord
+${JAVA_HOME}/bin/java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.xenocanto.XenoCantoRecord
 
 #iInsert Noise records to database
-#${JAVA_HOME}/bin/java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.noise.NoiseRecords
+${JAVA_HOME}/bin/java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.noise.NoiseRecords
 
 #make inventory File
-#${JAVA_HOME}/bin/java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.ml.Inventory
+${JAVA_HOME}/bin/java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.ml.Inventory
 
 #rm -f {{ openSoundID_directory }}/dataset/training/JSONDirectory/*.json
 #rm -f {{ openSoundID_directory }}/dataset/training/FeaturesDirectory/*.arff
 #rm -f {{ openSoundID_directory }}/dataset/training/WAVDirectory/*.wav
-#rm -f {{ openSoundID_directory }}/dataset/test-xcalso/AlsoDataSetJSONDirectory/*.json
-#rm -f {{ openSoundID_directory }}/dataset/test-xcalso/AlsoDataSetFeaturesDirectory/*.arff
-#rm -f {{ openSoundID_directory }}/dataset/test-xcalso/AlsoDataSetWAVDirectory/*.wav
+#rm -f {{ openSoundID_directory }}/dataset/test-xcalso/JSONDirectory/*.json
+#rm -f {{ openSoundID_directory }}/dataset/test-xcalso/FeaturesDirectory/*.arff
+#rm -f {{ openSoundID_directory }}/dataset/test-xcalso/WAVDirectory/*.wav
 
 #download wave file and make dataset for training dataset
-#pushd  ${ANSIBLE_DIR}/ansible-make-datasets
-#ansible-playbook playbook-make-training-datasets.yml -e root_dir=${ROOT_DIR}
-#popd
+pushd  ${ANSIBLE_DIR}/ansible-make-datasets
+ansible-playbook playbook-make-training-datasets.yml -e root_dir=${ROOT_DIR}
+popd
 
 #download wave file and make dataset file for test dataset
-#pushd  ${ANSIBLE_DIR}/ansible-make-datasets
-#ansible-playbook playbook-make-test-datasets.yml -e root_dir=${ROOT_DIR}
-#popd
+pushd  ${ANSIBLE_DIR}/ansible-make-datasets
+ansible-playbook playbook-make-test-datasets.yml -e root_dir=${ROOT_DIR}
+popd
 
-#cp {{ openSoundID_directory }}/properties/opensoundid.properties ${RESULT_DIR}
-#cp {{ openSoundID_directory }}/bin/audiotofeatures.py ${RESULT_DIR}
+cp {{ openSoundID_directory }}/properties/opensoundid.properties ${RESULT_DIR}
+cp {{ openSoundID_directory }}/bin/audiotofeatures.py ${RESULT_DIR}
 
-wait < <(jobs -p)
 
-#${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.Features
+${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.Features
 
 set +e
-#rm {{ openSoundID_directory }}/Signature-2.0/model/*.model
+rm {{ openSoundID_directory }}/Signature-2.0/model/*.model
 set -e
-#cp {{ openSoundID_directory }}/dataset/results/test-200.arff {{ openSoundID_directory }}/dataset/results/testalso-500.arff $TMPDIR
-#${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/mtj.jar:lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.Classification --arffTestDirectory=$TMPDIR
-#cp {{ openSoundID_directory }}/Signature-2.0/logs/SoundAnalyzer.log ${RESULT_DIR}
-#rm -rf $TMPDIR
+cp {{ openSoundID_directory }}/dataset/results/test-200.arff {{ openSoundID_directory }}/dataset/results/testalso-500.arff $TMPDIR
+${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/mtj.jar:lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.Classification --arffTestDirectory=$TMPDIR
+cp {{ openSoundID_directory }}/Signature-2.0/logs/SoundAnalyzer.log ${RESULT_DIR}
+rm -rf $TMPDIR

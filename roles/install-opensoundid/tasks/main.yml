@@ -67,7 +67,7 @@
     domain: opensoundid
     limit_type: '-'
     limit_item: nofile
-    value: unlimited
+    value: 8192
     comment: unlimited nofile for user opensoundid
 
 - name: check that results directory exists
@@ -231,6 +231,13 @@
     owner: opensoundid
     group: opensoundid
 
+- name: Copy update.sql
+  copy:
+    src: database/update.sql
+    dest: "{{ openSoundID_directory }}/database/update.sql"
+    owner: opensoundid
+    group: opensoundid
+
 - name: Copy H2 database jar
   copy:
     src: lib/h2-1.4.200.jar
@@ -267,10 +274,34 @@
     group: opensoundid
     mode: '0744'
 
-- name: Template createdatabase.sh files to bin
+- name: Template createDatabase.sh.j2 files to bin
   template:
-    src: createdatabase.sh.j2
-    dest: "{{ openSoundID_directory }}/bin/createdatabase.sh"
+    src: createDatabase.sh.j2
+    dest: "{{ openSoundID_directory }}/bin/createDatabase.sh"
+    owner: opensoundid
+    group: opensoundid
+    mode: '0744'
+
+- name: Template populateDatabase.sh.j2 files to bin
+  template:
+    src: populateDatabase.sh.j2
+    dest: "{{ openSoundID_directory }}/bin/populateDatabase.sh"
+    owner: opensoundid
+    group: opensoundid
+    mode: '0744'
+
+- name: Template updateDatabase.sh.j2 files to bin
+  template:
+    src: updateDatabase.sh.j2
+    dest: "{{ openSoundID_directory }}/bin/updateDatabase.sh"
+    owner: opensoundid
+    group: opensoundid
+    mode: '0744'
+
+- name: Template analyze.sh.j2 files to bin
+  template:
+    src: analyze.sh.j2
+    dest: "{{ openSoundID_directory }}/bin/analyze.sh"
     owner: opensoundid
     group: opensoundid
     mode: '0744'
@@ -308,7 +339,7 @@
 
 - name: adjust right on directory
   file:
-    path: "{{ openSoundID_directory }}/javasrc/Engine"
+    path: "{{ openSoundID_directory }}/javasrc"
     state: directory
     recurse: true
     owner: opensoundid
