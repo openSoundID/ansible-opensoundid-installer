@@ -1,5 +1,33 @@
 ---
 
+- name: Enable EPEL Repository on CentOS 8
+  dnf:
+    name: epel-release
+    state: latest
+  when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
+          (ansible_distribution_major_version == "8")
+
+- name: Enable EPEL Repository on CentOS 7
+  yum:
+  name: epel-release
+  state: latest
+  when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
+          (ansible_distribution_major_version == "7")
+
+- name: Enable the RPM Fusion repository on CentOS 8
+  dnf:
+    name: "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
+    state: present
+  when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
+          (ansible_distribution_major_version == "8")
+
+- name: Enable the RPM Fusion repository on CentOS 7
+  yum:
+    name: "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
+    state: present
+  when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
+          (ansible_distribution_major_version == "7") 
+
 - name: Install the latest version of Java 11
   yum:
     name: java-11-openjdk-devel
