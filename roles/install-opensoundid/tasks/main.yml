@@ -34,7 +34,13 @@
   yum:
     name: unzip
     state: latest
-- name: Install the latest version of unzip
+
+- name: Install the latest version of tar
+  yum:
+    name: tar
+    state: latest
+
+- name: Install the latest version of java 11 openjdk
   yum:
     name: java-11-openjdk-devel
     state: latest
