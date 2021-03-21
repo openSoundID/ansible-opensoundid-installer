@@ -22,7 +22,7 @@
   when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
           (ansible_distribution_major_version == "8")
 
-- name: Enable the RPM Fusion FREE repository on CentOS 7
+- name: Enable the RPM Fusion Free repository on CentOS 7
   yum:
     name: "https://download1.rpmfusion.org/el/fedora/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
     state: present
@@ -30,15 +30,11 @@
   when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
           (ansible_distribution_major_version == "7") 
 
-- name: Enable PowerTool on CentOS 8
+- name: Install the latest version of unzip
   yum:
-    name: "https://download1.rpmfusion.org/el/fedora/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
-    state: present
-    disable_gpg_check: yes
-  when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
-          (ansible_distribution_major_version == "7") 
-
-- name: Install the latest version of Java 11
+    name: unzip
+    state: latest
+- name: Install the latest version of unzip
   yum:
     name: java-11-openjdk-devel
     state: latest
