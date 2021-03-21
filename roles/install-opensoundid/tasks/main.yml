@@ -48,7 +48,7 @@
   dnf:
     name: ffmpeg
     state: latest
-    enablerepo: PowerTools
+    enablerepo: powertools
 
 - name: Install the latest version of sox
   yum:
