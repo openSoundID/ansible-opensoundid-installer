@@ -24,7 +24,7 @@
 
 - name: Enable the RPM Fusion Free repository on CentOS 7
   yum:
-    name: "https://download1.rpmfusion.org/el/fedora/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
+    name: "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
     state: present
     disable_gpg_check: yes
   when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
