@@ -49,7 +49,7 @@
     state: latest
 
 - name: Install the latest version of ffmpeg
-  yum:
+  dnf:
     name: ffmpeg
     state: latest
     enablerepo: PowerTools
