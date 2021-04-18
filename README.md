@@ -1,8 +1,11 @@
 # ansible-opensoundid-installer
-this ansible playbook installs openSoundID
 
-usages :
+# Install openSoundID:
 
-ansible-playbook playbook-install-opensoundid.yml
+## CENTOS 7/CENTOS 8
+`git clone https://github.com/openSoundID/ansible-opensoundid-installer.git`
 
+`cd ansible-opensoundid-installer`
+
+`./install.sh`
 
