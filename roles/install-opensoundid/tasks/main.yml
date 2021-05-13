@@ -354,7 +354,7 @@
     dest: "{{ openSoundID_directory }}/bin/analyze.sh"
     owner: opensoundid
     group: opensoundid
-    mode: '0744'
+    mode: '4755'
 
 - name: Git checkout ansible-retrieve-metadata repository
   git:

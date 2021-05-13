@@ -4,6 +4,17 @@ function getProperties {
     grep "${1}" /home/opensoundid/properties/opensoundid.properties|cut -d'=' -f2
 }
 
+waitForResult=true
+deleteResultFile=true
+
+while getopts w:d: flag
+do
+    case "${flag}" in
+        w) waitForResult=${OPTARG};;
+        d) deleteResultFile=${OPTARG};;
+    esac
+done
+
 set -e
 
 TMPDIR=$(mktemp -d);
@@ -26,11 +37,18 @@ ${ROOT_DIR}/bin/audiotofeatures.py ${TMPDIR}/${filename}-mono4.wav ${TMPDIR}/${f
 touch -t $2 ${TMPDIR}/${filename}.json
 mv ${TMPDIR}/${filename}.json $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.json
 
-while [ ! -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt ]; do sleep 1; done
-cat $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt
+if [ ${waitForResult} ]; then
+   while [ ! -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt ]; do sleep 1; done
+   cat $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt
+   rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt
+   rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.json
+fi
+
+if [ ${deleteResultFile} ]; then
+   rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt
+   rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.json
+fi
 
 rm -rf ${TMPDIR}
-rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt
-rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.json
 
 
