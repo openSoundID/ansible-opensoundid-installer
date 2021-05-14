@@ -356,10 +356,16 @@
     group: opensoundid
     mode: '4755'
 
+- name: remove ansible-retrieve-metadata directory if present
+  file:
+    path: "{{ openSoundID_directory }}/ansible/ansible-retrieve-metadata"
+    state: absent
+
 - name: Git checkout ansible-retrieve-metadata repository
   git:
     repo: 'https://github.com/openSoundID/ansible-retrieve-metadata.git'
     dest: "{{ openSoundID_directory }}/ansible/ansible-retrieve-metadata"
+
 
 - name: adjust right on directory
   file:
@@ -368,6 +374,11 @@
     recurse: true
     owner: opensoundid
     group: opensoundid
+
+- name: remove ansible-make-datasets directory if present
+  file:
+    path: "{{ openSoundID_directory }}/ansible/ansible-make-datasets"
+    state: absent
 
 - name: Git checkout ansible-make-datasets repository
   git:

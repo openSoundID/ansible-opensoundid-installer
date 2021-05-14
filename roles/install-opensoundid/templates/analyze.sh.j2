@@ -1,11 +1,11 @@
 #!/bin/bash
 
-function getProperties() {
+function getProperties {
     grep "${1}" /home/opensoundid/properties/opensoundid.properties|cut -d'=' -f2
 }
 
-function display_usage() { 
-	echo "analyze.sh -i inputAudioFile -t dateAndTime -w true -d true" 
+function display_usage { 
+	echo "analyze.sh -i inputAudioFile -t YYYYmmddHHMM -w true -d true" 
 	exit 1
 } 
 
@@ -13,7 +13,7 @@ waitForResult=true
 deleteResultFile=true
 dateAndTime=""
 
-while getopts w:d: flag
+while getopts d:hi:t:w: flag
 do
     case "${flag}" in
         i) inputFile=${OPTARG};;
@@ -33,7 +33,7 @@ filenameWithExtension=$(basename -- "${inputFile}")
 extension="${filenameWithExtension##*.}"
 filename="${filenameWithExtension%.*}"
 
-cp ${1} ${TMPDIR}/${filenameWithExtension}
+cp ${inputFile} ${TMPDIR}/${filenameWithExtension}
 /usr/bin/sox -R ${TMPDIR}/${filenameWithExtension} -r $(getProperties 'analyze.sox.rate') -c 1 -b $(getProperties 'analyze.sox.bitsnumber') ${TMPDIR}/${filename}-mono.wav highpass $(getProperties 'analyze.sox.highpass') norm $(getProperties 'analyze.sox.normdb') 1> /dev/null 2>&1
 ${ROOT_DIR}/bin/extractnoise.py ${TMPDIR}/${filename}-mono.wav ${TMPDIR}/${filename}-noise.wav 1> /dev/null 2>&1
 /usr/bin/sox  -R ${TMPDIR}/${filename}-noise.wav -n noiseprof ${TMPDIR}/noise 1> /dev/null 2>&1
@@ -46,14 +46,14 @@ ${ROOT_DIR}/bin/audiotofeatures.py ${TMPDIR}/${filename}-mono4.wav ${TMPDIR}/${f
 touch -t ${dateAndTime} ${TMPDIR}/${filename}.json
 mv ${TMPDIR}/${filename}.json $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.json
 
-if [ ${waitForResult} ]; then
+if [ "${waitForResult}" = true ]; then
    while [ ! -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt ]; do sleep 1; done
    cat $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt
    rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt
    rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.json
 fi
 
-if [ ${deleteResultFile} ]; then
+if [ "${deleteResultFile}" = true ]; then
    rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt
    rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.json
 fi
