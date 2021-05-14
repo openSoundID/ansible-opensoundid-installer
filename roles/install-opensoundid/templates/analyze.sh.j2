@@ -1,17 +1,26 @@
 #!/bin/bash
 
-function getProperties {
+function getProperties() {
     grep "${1}" /home/opensoundid/properties/opensoundid.properties|cut -d'=' -f2
 }
 
+function display_usage() { 
+	echo "analyze.sh -i inputAudioFile -t dateAndTime -w true -d true" 
+	exit 1
+} 
+
 waitForResult=true
 deleteResultFile=true
+dateAndTime=""
 
 while getopts w:d: flag
 do
     case "${flag}" in
-        w) waitForResult=${OPTARG};;
+        i) inputFile=${OPTARG};;
         d) deleteResultFile=${OPTARG};;
+	h) display_usage;;
+	t) dateAndTime=${OPTARG};;
+	w) waitForResult=${OPTARG};;
     esac
 done
 
@@ -20,7 +29,7 @@ set -e
 TMPDIR=$(mktemp -d);
 ROOT_DIR={{ openSoundID_directory }}
 
-filenameWithExtension=$(basename -- "${1}")
+filenameWithExtension=$(basename -- "${inputFile}")
 extension="${filenameWithExtension##*.}"
 filename="${filenameWithExtension%.*}"
 
@@ -34,7 +43,7 @@ ${ROOT_DIR}/bin/extractnoise.py ${TMPDIR}/${filename}-mono.wav ${TMPDIR}/${filen
 
 
 ${ROOT_DIR}/bin/audiotofeatures.py ${TMPDIR}/${filename}-mono4.wav ${TMPDIR}/${filename}.json 1> /dev/null 2>&1
-touch -t $2 ${TMPDIR}/${filename}.json
+touch -t ${dateAndTime} ${TMPDIR}/${filename}.json
 mv ${TMPDIR}/${filename}.json $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.json
 
 if [ ${waitForResult} ]; then
