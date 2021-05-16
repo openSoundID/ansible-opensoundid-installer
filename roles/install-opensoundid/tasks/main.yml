@@ -260,6 +260,13 @@
     owner: opensoundid
     group: opensoundid
 
+- name: check that scoreLogger directory exists
+  file:
+    path: "{{ openSoundID_directory }}/scoreLogger"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
 - name: Copy noise file
   copy:
     src: noises/noise.wav
