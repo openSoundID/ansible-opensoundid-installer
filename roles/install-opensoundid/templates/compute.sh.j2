@@ -1,6 +1,73 @@
 #!/bin/bash
 
+JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+
 set -e
+
+function display_usage { 
+	echo "compute.sh --all | compute.sh -a|--RMArff -b|--createDatabase -c|--classification -d|--MakeDataset -f|--MakeFeatures -h|--help -j|--RMJson -m|--Metadata -o|--RMModel -p|--compile -w|--RMWav" 
+	exit 1
+} 
+
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -a|--RMArff)
+    DELARFF=true
+    shift # past argument
+    ;;    
+    -b|--createDatabase)
+    CREATEDATABASE=true
+    shift # past argument
+    ;;    
+    -c|--classification)
+    CLASSIFICATION=true
+    shift # past argument
+    ;;
+    -d|--MakeDataset)
+    MAKEDATASET=true
+    shift # past argument
+    ;;
+    -f|--MakeFeatures)
+    MAKEFEATURES=true
+    shift # past argument
+    ;;
+    -h|--help)
+    display_usage
+    shift # past argument
+    ;;
+    -j|--RMJson)
+    DELJSON=true
+    shift # past argument
+    ;;
+    -m|--Metadata)
+    METADATA=true
+    shift # past argument
+    ;;
+    -o|--RMModel)
+    RMMODEL=true
+    shift # past argument
+    ;;
+    -p|--compile)
+    COMPILE=true
+    shift # past argument
+    ;;
+    -w|--RMWav)
+    DELWAV=true
+    shift # past argument
+    ;;
+    --all)
+    DEFAULT=YES
+    shift # past argument
+    ;;
+    *)    # unknown option
+    echo "unknown option"
+    shift # past argument
+    ;;
+esac
+done
 
 TMPDIR=$(mktemp -d);
 ROOT_DIR={{ openSoundID_directory }}/
@@ -11,60 +78,92 @@ mkdir -p ${RESULT_DIR}
 
 cd ${ROOT_DIR}
 
-export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
-pushd  {{ openSoundID_directory }}/javasrc/Engine
-mvn -DskipTests install
-popd
-
-cp {{ openSoundID_directory }}/javasrc/Engine/export/engine-1.0.0-SNAPSHOT.jar lib/
+#compile
+if [ "${COMPILE}" = true ] ; then
+   pushd  {{ openSoundID_directory }}/javasrc/Engine
+   mvn -DskipTests install
+   popd
+   cp {{ openSoundID_directory }}/javasrc/Engine/export/engine-1.0.0-SNAPSHOT.jar lib/
+fi
 
 #create database
-./bin/createDatabase.sh
+if [ "${CREATEDATABASE}" = true ] ; then
+   ./bin/createDatabase.sh
+fi
 
 #download metadata and make database file
-pushd  ${ANSIBLE_DIR}/ansible-retrieve-metadata
-ansible-playbook playbook-retrieve-metadata.yml -e root_dir=${ROOT_DIR}
-popd
+if [ "${METADATA}" = true ] ; then
 
-#populate database
-./bin/populateDatabase.sh
+   
+   pushd  ${ANSIBLE_DIR}/ansible-retrieve-metadata
+   ansible-playbook playbook-retrieve-metadata.yml -e root_dir=${ROOT_DIR}
+   popd
 
-#json metadata to database
-${JAVA_HOME}/bin/java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.xenocanto.XenoCantoRecord
+   #populate database
+  ./bin/populateDatabase.sh
 
-#iInsert Noise records to database
-${JAVA_HOME}/bin/java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.noise.NoiseRecords
+  #json metadata to database
+  ${JAVA_HOME}/bin/java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.xenocanto.XenoCantoRecord
 
-#make inventory File
-${JAVA_HOME}/bin/java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.ml.Inventory
+  #Insert Noise records to database
+  ${JAVA_HOME}/bin/java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.noise.NoiseRecords
 
-#rm -f {{ openSoundID_directory }}/dataset/training/JSONDirectory/*.json
-#rm -f {{ openSoundID_directory }}/dataset/training/FeaturesDirectory/*.arff
-#rm -f {{ openSoundID_directory }}/dataset/training/WAVDirectory/*.wav
-#rm -f {{ openSoundID_directory }}/dataset/test-xcalso/JSONDirectory/*.json
-#rm -f {{ openSoundID_directory }}/dataset/test-xcalso/FeaturesDirectory/*.arff
-#rm -f {{ openSoundID_directory }}/dataset/test-xcalso/WAVDirectory/*.wav
+  #make inventory File
+  ${JAVA_HOME}/bin/java -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties"  org.opensoundid.ml.Inventory
 
-#download wave file and make dataset for training dataset
-pushd  ${ANSIBLE_DIR}/ansible-make-datasets
-ansible-playbook playbook-make-training-datasets.yml -e root_dir=${ROOT_DIR}
-popd
+fi
 
-#download wave file and make dataset file for test dataset
-pushd  ${ANSIBLE_DIR}/ansible-make-datasets
-ansible-playbook playbook-make-test-datasets.yml -e root_dir=${ROOT_DIR}
-popd
+#Remove ARFF files
+if [ "${RMARFF}" = true ] ; then
+   rm -f {{ openSoundID_directory }}/dataset/training/FeaturesDirectory/*.arff
+   rm -f {{ openSoundID_directory }}/dataset/test-xcalso/FeaturesDirectory/*.arff
+fi
+
+#Remove JSON files
+if [ "${RMJSON}" = true ] ; then
+   rm -f {{ openSoundID_directory }}/dataset/training/JSONDirectory/*.json
+   rm -f {{ openSoundID_directory }}/dataset/test-xcalso/JSONDirectory/*.json
+fi
+
+#Remove WAV files
+if [ "${RMWAV}" = true ] ; then
+   rm -f {{ openSoundID_directory }}/dataset/training/WAVDirectory/*.wav
+   rm -f {{ openSoundID_directory }}/dataset/test-xcalso/WAVDirectory/*.wav
+fi
+
+#Make dataset
+if [ "${MAKEDATASET}" = true ] ; then
+ 
+   #download wave file and make dataset for training dataset
+   pushd  ${ANSIBLE_DIR}/ansible-make-datasets
+   ansible-playbook playbook-make-training-datasets.yml -e root_dir=${ROOT_DIR}
+   popd
+
+   #download wave file and make dataset file for test dataset
+   pushd  ${ANSIBLE_DIR}/ansible-make-datasets
+   ansible-playbook playbook-make-test-datasets.yml -e root_dir=${ROOT_DIR}
+   popd
+
+fi
 
 cp {{ openSoundID_directory }}/properties/opensoundid.properties ${RESULT_DIR}
 cp {{ openSoundID_directory }}/bin/audiotofeatures.py ${RESULT_DIR}
 
+#Make Features
+if [ "${MAKEFEATURES}" = true ] ; then
+   ${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.Features
+fi
 
-${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.Features
+#Remove MODEL files
+if [ "${RMMODEL}" = true ] ; then
+   rm -f {{ openSoundID_directory }}/Signature-2.0/model/*.model
+fi
 
-set +e
-rm {{ openSoundID_directory }}/Signature-2.0/model/*.model
-set -e
-cp {{ openSoundID_directory }}/dataset/results/test-200.arff {{ openSoundID_directory }}/dataset/results/testalso-500.arff $TMPDIR
-${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/mtj.jar:lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.Classification --arffTestDirectory=$TMPDIR
-cp {{ openSoundID_directory }}/Signature-2.0/logs/SoundAnalyzer.log ${RESULT_DIR}
+#Classification
+if [ "${CLASSIFICATION}" = true ] ; then
+   cp {{ openSoundID_directory }}/dataset/results/test-200.arff {{ openSoundID_directory }}/dataset/results/testalso-500.arff $TMPDIR
+   ${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/mtj.jar:lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.Classification --arffTestDirectory=$TMPDIR
+if
+
+cp {{ openSoundID_directory }}/Signature-2.0/logs/openSoundID.log  ${RESULT_DIR}
 rm -rf $TMPDIR
