@@ -59,7 +59,16 @@ case $key in
     shift # past argument
     ;;
     --all)
-    DEFAULT=YES
+    DELARFF=true
+    CREATEDATABASE=true
+    CLASSIFICATION=true
+    MAKEDATASET=true
+    MAKEFEATURES=true
+    DELJSON=true
+    METADATA=true
+    RMMODEL=true
+    COMPILE=true
+    DELWAV=true
     shift # past argument
     ;;
     *)    # unknown option
