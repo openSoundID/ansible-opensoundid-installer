@@ -117,7 +117,7 @@
     domain: opensoundid
     limit_type: '-'
     limit_item: nofile
-    value: 8192
+    value: "8192"
     comment: unlimited nofile for user opensoundid
 
 - name: check that results directory exists
