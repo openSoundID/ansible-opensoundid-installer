@@ -9,6 +9,10 @@ function display_usage {
 	exit 1
 } 
 
+if [ "$#" -lt 1 ]; then
+    display_usage
+fi
+
 while [[ $# -gt 0 ]]
 do
 key="$1"
@@ -72,7 +76,7 @@ case $key in
     shift # past argument
     ;;
     *)    # unknown option
-    echo "unknown option"
+    display_usage
     shift # past argument
     ;;
 esac
@@ -172,7 +176,9 @@ fi
 if [ "${CLASSIFICATION}" = true ] ; then
    cp {{ openSoundID_directory }}/dataset/results/test-200.arff {{ openSoundID_directory }}/dataset/results/testalso-500.arff $TMPDIR
    ${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/mtj.jar:lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.Classification --arffTestDirectory=$TMPDIR
-if
+fi
 
-cp {{ openSoundID_directory }}/Signature-2.0/logs/openSoundID.log  ${RESULT_DIR}
+if [ -f "{{ openSoundID_directory }}/logs/openSoundID.log" ] ; then
+   cp {{ openSoundID_directory }}/logs/openSoundID.log  ${RESULT_DIR}
+fi
 rm -rf $TMPDIR
