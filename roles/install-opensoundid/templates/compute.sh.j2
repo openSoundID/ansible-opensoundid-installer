@@ -5,7 +5,7 @@ JAVA_HOME=/usr/lib/jvm/java-11-openjdk
 set -e
 
 function display_usage { 
-	echo "compute.sh --all | compute.sh -a|--RMArff -b|--createDatabase -c|--classification -d|--MakeDataset -f|--MakeFeatures -h|--help -j|--RMJson -m|--Metadata -o|--RMModel -p|--compile -w|--RMWav" 
+	echo "compute.sh --all | compute.sh -a|--RMArff -b|--createDatabase -c|--classification -d|--MakeDataset -f|--MakeFeatures -h|--help -j|--RMJson -m|--Metadata -o|--RMModel -p|--compile -u|--updateDB -w|--RMWav" 
 	exit 1
 } 
 
@@ -58,6 +58,10 @@ case $key in
     COMPILE=true
     shift # past argument
     ;;
+    -u|--updateDB)
+    UPDATEDB=true
+    shift # past argument
+    ;;
     -w|--RMWav)
     DELWAV=true
     shift # past argument
@@ -72,6 +76,7 @@ case $key in
     METADATA=true
     RMMODEL=true
     COMPILE=true
+    UPDATEDB=true
     DELWAV=true
     shift # past argument
     ;;
@@ -161,6 +166,11 @@ fi
 
 cp {{ openSoundID_directory }}/properties/opensoundid.properties ${RESULT_DIR}
 cp {{ openSoundID_directory }}/bin/audiotofeatures.py ${RESULT_DIR}
+
+#update database
+if [ "${UPDATEDB}" = true ] ; then
+   ./bin/updateDatabase.sh
+fi
 
 #Make Features
 if [ "${MAKEFEATURES}" = true ] ; then

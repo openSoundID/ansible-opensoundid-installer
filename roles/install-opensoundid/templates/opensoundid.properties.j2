@@ -80,7 +80,6 @@ optimization.dataDirectory={{ openSoundID_directory }}/testOptimization
 engine.ScoreAnalyzer.defaultScoreThreshold=10
 engine.ScoreAnalyzer.specificScoreThreshold.1000=1
 engine.ScoreAnalyzer.specificScoreThreshold.10000=1
-engine.ScoreAnalyzer.specificScoreThreshold.0=1000000
 
 #ResultSender
 ResultSender.enable=false
@@ -135,7 +134,7 @@ jsontodb.databaseurl=jdbc:h2:file:{{ openSoundID_directory }}/database/opensound
 #Inventory
 inventory.trainingInventoryFile={{ openSoundID_directory }}/inventory/training_inventory.yml
 inventory.testInventoryFile={{ openSoundID_directory }}/inventory/test_inventory.yml
-inventory.excludedKeyword=mimicry, imitation, mimicries
+inventory.excludedKeyword=mimicry, imitation, mimicries, aberrant, bruit, rain, unusual, noise, bells, wind, hatchling, human
 Inventory.databaseurl=jdbc:h2:file:{{ openSoundID_directory }}/database/opensoundid
 
 #Noise Records

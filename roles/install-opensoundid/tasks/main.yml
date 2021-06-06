@@ -1,34 +1,17 @@
 ---
 
-- name: Enable EPEL Repository on CentOS 8
+- name: Enable EPEL Repository on CentOS and RHEL
   dnf:
     name: epel-release
     state: latest
-  when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
-          (ansible_distribution_major_version == "8")
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
 
-- name: Enable EPEL Repository on CentOS 7
-  yum:
-    name: epel-release
-    state: latest
-  when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
-          (ansible_distribution_major_version == "7")
-
-- name: Enable the RPM Fusion Free repository on CentOS 8
+- name: Enable the RPM Fusion Free repository on CentOS, RHEL and Fedora
   dnf:
-    name: "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
+    name: "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
     state: present
     disable_gpg_check: yes
-  when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
-          (ansible_distribution_major_version == "8")
-
-- name: Enable the RPM Fusion Free repository on CentOS 7
-  yum:
-    name: "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
-    state: present
-    disable_gpg_check: yes
-  when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
-          (ansible_distribution_major_version == "7") 
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat" or ansible_distribution == "Fedora"
 
 - name: Install the latest version of unzip
   yum:
@@ -65,6 +48,12 @@
   when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
           (ansible_distribution_major_version == "7") 
 
+- name: Install the latest version of ffmpeg
+  yum:
+    name: ffmpeg
+    state: latest
+  when: ansible_distribution == "Fedora"
+
 - name: Install the latest version of sox
   yum:
     name: sox
@@ -85,7 +74,6 @@
 - name: Install essentia with pip 
   pip:
     name: essentia
-    version: 2.1b6.dev234
     executable: pip-3
 
 - name: Install xeno-canto with pip 
