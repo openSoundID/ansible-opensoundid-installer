@@ -222,6 +222,13 @@
     state: directory
     owner: opensoundid
     group: opensoundid
+    
+- name: check that training Label directory exists
+  file:
+    path: "{{ openSoundID_directory }}/dataset/training/LabelDirectory"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
 
 - name: check that training noises directory exists
   file:
@@ -247,6 +254,13 @@
 - name: check that test-xcalso JSON  directory exists
   file:
     path: "{{ openSoundID_directory }}/dataset/test-xcalso/JSONDirectory"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+
+- name: check that test-xcalso Label  directory exists
+  file:
+    path: "{{ openSoundID_directory }}/dataset/test-xcalso/LabelDirectory"
     state: directory
     owner: opensoundid
     group: opensoundid
@@ -325,6 +339,7 @@
   template:
     src: opensoundid.properties.j2
     dest: "{{ openSoundID_directory }}/properties/opensoundid.properties"
+    backup: yes
     owner: opensoundid
     group: opensoundid
 
@@ -332,6 +347,7 @@
   template:
     src: log4j2.properties.j2
     dest: "{{ openSoundID_directory }}/properties/log4j2.properties"
+    backup: yes
     owner: opensoundid
     group: opensoundid
 
