@@ -19,7 +19,7 @@ key="$1"
 
 case $key in
     -a|--RMArff)
-    DELARFF=true
+    RMARFF=true
     shift # past argument
     ;;    
     -b|--createDatabase)
@@ -43,7 +43,7 @@ case $key in
     shift # past argument
     ;;
     -j|--RMJson)
-    DELJSON=true
+    RMJSON=true
     shift # past argument
     ;;
     -m|--Metadata)
@@ -63,21 +63,21 @@ case $key in
     shift # past argument
     ;;
     -w|--RMWav)
-    DELWAV=true
+    RMWAV=true
     shift # past argument
     ;;
     --all)
-    DELARFF=true
+    RMARFF=true
     CREATEDATABASE=true
     CLASSIFICATION=true
     MAKEDATASET=true
     MAKEFEATURES=true
-    DELJSON=true
+    RMJSON=true
     METADATA=true
     RMMODEL=true
     COMPILE=true
     UPDATEDB=true
-    DELWAV=true
+    RMWAV=true
     shift # past argument
     ;;
     *)    # unknown option
