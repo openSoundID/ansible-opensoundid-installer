@@ -7,5 +7,5 @@
 
 `cd ansible-opensoundid-installer`
 
-`./install.sh`
+`sudo ./install.sh`
 
