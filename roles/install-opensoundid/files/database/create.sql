@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS Record
  length VARCHAR(50),
  time VARCHAR(50),
  date VARCHAR(50),
- rmk VARCHAR(4096),
+ rmk VARCHAR(8192),
  type VARCHAR(250),
  origin VARCHAR(25),
  enabled BOOLEAN,
