@@ -5,7 +5,7 @@ export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
 set -e
 
 function display_usage { 
-	echo "compute.sh --all | compute.sh -a|--RMArff -b|--createDatabase -c|--classification -d|--MakeDataset -f|--MakeFeatures -h|--help -j|--RMJson -m|--Metadata -o|--RMModel -p|--compile -u|--updateDB -w|--RMWav" 
+	echo "compute.sh --all | compute.sh -a|--RMArff -b|--createDatabase -c|--classification -d|--MakeDataset -f|--MakeFeatures -h|--help -j|--RMJson -m|--Metadata -o|--RMModel -p|--compile -u|--updateDB -t|--training -w|--RMWav" 
 	exit 1
 } 
 
@@ -58,6 +58,10 @@ case $key in
     COMPILE=true
     shift # past argument
     ;;
+    -t|--training)
+    TRAINING=true
+    shift # past argument
+    ;;
     -u|--updateDB)
     UPDATEDB=true
     shift # past argument
@@ -76,6 +80,7 @@ case $key in
     METADATA=true
     RMMODEL=true
     COMPILE=true
+    TRAINING=true
     UPDATEDB=true
     RMWAV=true
     shift # past argument
@@ -172,20 +177,25 @@ if [ "${UPDATEDB}" = true ] ; then
    ./bin/updateDatabase.sh
 fi
 
-#Make Features
+#Make CNN Features
 if [ "${MAKEFEATURES}" = true ] ; then
-   ${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.Features
+   ${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.CNNFeatures
 fi
 
 #Remove MODEL files
 if [ "${RMMODEL}" = true ] ; then
-   rm -f {{ openSoundID_directory }}/model/*.model
+   rm -f {{ openSoundID_directory }}/model/*.bin
 fi
 
-#Classification
+#CNN Training
+if [ "${TRAINING}" = true ] ; then
+   ${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.CNNTraining
+fi
+
+#MAKE Classification
 if [ "${CLASSIFICATION}" = true ] ; then
    cp {{ openSoundID_directory }}/dataset/results/test-200.arff {{ openSoundID_directory }}/dataset/results/testalso-500.arff $TMPDIR
-   ${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/mtj.jar:lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.Classification --arffTestDirectory=$TMPDIR
+   ${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.CNNClassification --arffTestDirectory=$TMPDIR
 fi
 
 if [ -f "{{ openSoundID_directory }}/logs/openSoundID.log" ] ; then

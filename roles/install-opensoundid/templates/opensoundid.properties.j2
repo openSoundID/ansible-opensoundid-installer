@@ -1,7 +1,6 @@
 #dsp
-dsp.numFeatures=8
-dsp.filterBankNumFilters=44
-dsp.maxAggSize=34
+dsp.filterBankNumFilters=299
+dsp.maxAggSize=298
 dsp.deltaN=5
 dsp.pooling.percentileHigh=90.0
 dsp.pooling.percentileLow=15.0
@@ -9,6 +8,7 @@ dsp.deltaOptimizePeakIndice=5
 dsp.peakAmplitudePercentile=64.0
 dsp.peakMinSequences=1
 dsp.melSpectraNormalisation.percentile=15.0
+dsp.spectrogramsImagePath=/home/opensoundid/dataset/spectrograms
 
 #ansible
 ansible.birds_list={{ openSoundID_directory }}/properties/birds_list.yml
@@ -24,16 +24,16 @@ ansible.mp3towav.sox.denoise.level=0.4
 ansible.mp3towav.ffmpeg.noiseloop=999
 ansible.mp3towav.ffmpeg.noise_wav_file={{ openSoundID_directory }}/noises/noise.wav
 ansible.essentia.windowtype=hann
-ansible.essentia.spectrumsize=1024
+ansible.essentia.spectrumsize=1536
 ansible.essentia.lowfrequencybound=1000
 ansible.essentia.highfrequencybound=8000
-ansible.essentia.framesize=1024
+ansible.essentia.framesize=1536
 ansible.essentia.hopsize=512
 ansible.essentia.samplerate=16000
 ansible.essentia.mfcc.normalize=unit_sum
 ansible.essentia.mfcc.warpingFormula=slaneyMel
 ansible.essentia.mfcc.weighting=warping
-ansible.essentia.mfcc.numberbands=44
+ansible.essentia.mfcc.numberbands=299
 ansible.essentia.envelope.attackTime=0
 ansible.essentia.envelope.releaseTime=5
 ansible.essentia.averagedenvelope.percentile=10.0
@@ -41,10 +41,10 @@ ansible.essentia.envelope.hopsize=512
 ansible.essentia.logNorm.type=log
 ansible.essentia.PeakDetection.maxPeaks=200
 ansible.essentia.PeakDetection.threshold=0.04
-ansible.essentia.PeakDetection.maxAggSize=34
+ansible.essentia.PeakDetection.maxAggSize=298
 ansible.essentia.PeakDetection.minPosition=20
 ansible.essentia.PeakDetection.maxPosition=21
-ansible.essentia.PeakDetection.deltaOptimizePeakIndice=5
+ansible.essentia.PeakDetection.deltaOptimizePeakIndice=50
 
 #analyze
 analyze.sox.highpass=1000
@@ -87,14 +87,25 @@ engine.ScoreAnalyzer.specificScoreThreshold.10000=1
 ResultSender.enable=false
 ResultSender.RestUrl=http://localhost:8080/birdsongcache/rest/rest/birdsObservations
 
-#Classification
-classification.rotationForest.NumExecutionSlots={{ ansible_processor_vcpus }}
-classification.rotationForest.MaxGroup=3
-classification.rotationForest.MinGroup=3
-classification.rotationForest.NumIterations=200
-classification.principalComponents.varianceCovered=1.0
-classification.trainingDirectory={{ openSoundID_directory }}/dataset/results
-classification.modelFileName={{ openSoundID_directory }}/model/rotationforest.model
+#CNN Training
+CNNTraining.spectrogramsDirectory=/home/opensoundid/dataset/spectrograms
+CNNTraining.arffTrainingFiles=/home/opensoundid/dataset/results/training.arff
+CNNTraining.arffTestFiles=/home/opensoundid/dataset/results/test.arff
+CNNTraining.randomSeed=1234
+CNNTraining.locationToSaveModelWithUpdaterFileName=/home/opensoundid/model/modelWithUpdater.zip
+CNNTraining.locationToSaveModelWithoutUpdaterFileName=/home/opensoundid/model/modelWithoutUpdater.zip
+CNNTraining.EarlyStoppingConfiguration.maxEpochsTermination=100
+CNNTraining.EarlyStoppingConfiguration.maxHour=24
+CNNTraining.EarlyStoppingConfiguration.evaluateEveryNEpochs=1
+CNNTraining.trainingBatchSize=16
+CNNTraining.testBatchSize=16
+CNNTraining.modelDirectoryName=/home/opensoundid/model
+
+#CNNClassification
+CNNClassification.modelFileName=/home/opensoundid/model/bestGraph.bin
+CNNClassification.batchSize=32
+CNNClassification.spectogramsDirectory=/home/opensoundid/dataset/spectrograms
+
 
 
 #ScoreLogger
@@ -108,27 +119,21 @@ engine.ScoreFiltrer.maxResult=2
 #features specifications
 featuresSpecifications.yaml_data_file={{ openSoundID_directory }}/properties/birds_list.yml
 
-#features
-features.featuresNumber=2000
-feature.numberOfMetadataFeatures=2
-features.jsonDirectory={{ openSoundID_directory }}/dataset/training/JSONDirectory
-features.alsoJsonDirectory={{ openSoundID_directory }}/dataset/test-xcalso/JSONDirectory
-features.featuresDirectory={{ openSoundID_directory }}/dataset/training/FeaturesDirectory
-features.alsoFeaturesDirectory={{ openSoundID_directory }}/dataset/test-xcalso/FeaturesDirectory
-features.arffTrainingFiles={{ openSoundID_directory }}/dataset/results/training.arff
-features.arffTestFiles={{ openSoundID_directory }}/dataset/results/test.arff
-features.subSampleArffTestFiles={{ openSoundID_directory }}/dataset/results/test-200.arff
-features.subSampleArffTestMaxCount=200
-features.arffTestAlsoFiles={{ openSoundID_directory }}/dataset/results/testalso.arff
-features.subSampleArffTestAlsoFiles={{ openSoundID_directory }}/dataset/results/testalso-500.arff
-features.subSampleArffTestAlsoMaxCount=500
-features.trainingSizePct=2
-features.spreadSubsampleFactor=2.0
-features.removeMisclassified.rotationForest.NumExecutionSlots={{ ansible_processor_vcpus }}
-features.removeMisclassified.rotationForest.MaxGroup=3
-features.removeMisclassified.rotationForest.MinGroup=3
-features.removeMisclassified.rotationForest.NumIterations=100
-features.removeMisclassified.principalComponents.varianceCovered=1.0
+#CNNFeatures
+CNNFeatures.featuresNumber=2000
+CNNFeatures.jsonDirectory={{ openSoundID_directory }}/dataset/training/JSONDirectory
+CNNFeatures.alsoJsonDirectory={{ openSoundID_directory }}/dataset/test-xcalso/JSONDirectory
+CNNFeatures.featuresDirectory={{ openSoundID_directory }}/dataset/training/FeaturesDirectory
+CNNFeatures.alsoFeaturesDirectory={{ openSoundID_directory }}/dataset/test-xcalso/FeaturesDirectory
+CNNFeatures.arffTrainingFiles={{ openSoundID_directory }}/dataset/results/training.arff
+CNNFeatures.arffTestFiles={{ openSoundID_directory }}/dataset/results/test.arff
+CNNFeatures.subSampleArffTestFiles={{ openSoundID_directory }}/dataset/results/test-200.arff
+CNNFeatures.subSampleArffTestMaxCount=200
+CNNFeatures.arffTestAlsoFiles={{ openSoundID_directory }}/dataset/results/testalso.arff
+CNNFeatures.subSampleArffTestAlsoFiles={{ openSoundID_directory }}/dataset/results/testalso-500.arff
+CNNFeatures.subSampleArffTestAlsoMaxCount=500
+CNNFeatures.trainingSizePct=2
+
 
 #jsonToDB
 jsontodb.databaseurl=jdbc:h2:file:{{ openSoundID_directory }}/database/opensoundid

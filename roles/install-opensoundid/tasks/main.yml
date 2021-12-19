@@ -132,6 +132,13 @@
     value: "8192"
     comment: unlimited nofile for user opensoundid
 
+- name: check that bashrc.d exists
+  file:
+    path: "{{ openSoundID_directory }}/.bashrc.d"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+   
 - name: check that results directory exists
   file:
     path: "{{ openSoundID_directory }}/results"
@@ -202,6 +209,13 @@
     owner: opensoundid
     group: opensoundid
 
+- name: check that spectrogram directory exists
+  file:
+    path: "{{ openSoundID_directory }}/dataset/spectrograms"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+    
 - name: check that training Download directory exists
   file:
     path: "{{ openSoundID_directory }}/dataset/training/DownloadDirectory"
@@ -293,6 +307,13 @@
     owner: opensoundid
     group: opensoundid
 
+- name: Copy bashrc.d path
+  copy:
+    src: bashrc.d/path.bashrc
+    dest: "{{ openSoundID_directory }}/.bashrc.d/path.bashrc"
+    owner: opensoundid
+    group: opensoundid
+
 - name: Copy noise file
   copy:
     src: noises/noise.wav
@@ -328,13 +349,6 @@
     owner: opensoundid
     group: opensoundid
 
-- name: Copy mtj.jar
-  copy:
-    src: lib/mtj.jar
-    dest: "{{ openSoundID_directory }}/lib/mtj.jar"
-    owner: opensoundid
-    group: opensoundid
-
 - name: Template opensoudid properties files to properties
   template:
     src: opensoundid.properties.j2
@@ -351,10 +365,10 @@
     owner: opensoundid
     group: opensoundid
 
-- name: Template compute.sh files to bin
+- name: Template osid.sh files to bin
   template:
-    src: compute.sh.j2
-    dest: "{{ openSoundID_directory }}/bin/compute.sh"
+    src: osid.sh.j2
+    dest: "{{ openSoundID_directory }}/bin/osid.sh"
     owner: opensoundid
     group: opensoundid
     mode: '0744'
@@ -448,18 +462,10 @@
     owner: opensoundid
     group: opensoundid
 
-- name: Template ansible.cfg files ansible-retrieve-metadata
+- name: Template ansible.cfg files
   template:
     src: ansible.cfg.j2
-    dest: "{{ openSoundID_directory }}/ansible/ansible-retrieve-metadata/ansible.cfg"
-    owner: opensoundid
-    group: opensoundid
-    mode: '0744'
-
-- name: Template ansible.cfg files ansible-make-datasets
-  template:
-    src: ansible.cfg.j2
-    dest: "{{ openSoundID_directory }}/ansible/ansible-make-datasets/ansible.cfg"
+    dest: "{{ openSoundID_directory }}/.ansible.cfg"
     owner: opensoundid
     group: opensoundid
     mode: '0744'
