@@ -365,10 +365,10 @@
     owner: opensoundid
     group: opensoundid
 
-- name: Template osid.sh files to bin
+- name: Template osid files to bin
   template:
-    src: osid.sh.j2
-    dest: "{{ openSoundID_directory }}/bin/osid.sh"
+    src: osid.j2
+    dest: "{{ openSoundID_directory }}/bin/osid"
     owner: opensoundid
     group: opensoundid
     mode: '0744'
@@ -415,7 +415,6 @@
     repo: 'https://github.com/openSoundID/ansible-retrieve-metadata.git'
     dest: "{{ openSoundID_directory }}/ansible/ansible-retrieve-metadata"
 
-
 - name: adjust right on directory
   file:
     path: "{{ openSoundID_directory }}/ansible/ansible-retrieve-metadata"
@@ -446,6 +445,7 @@
   git:
     repo: 'https://github.com/openSoundID/Engine.git'
     dest: "{{ openSoundID_directory }}/javasrc/Engine"
+    force: yes
 
 - name: adjust right on directory
   file:
