@@ -182,8 +182,8 @@ fi
 
 #Remove ARFF files
 if [ "${RMARFF}" = true ] ; then
-   rm -f {{ openSoundID_directory }}/dataset/training/FeaturesDirectory/*.arff
-   rm -f {{ openSoundID_directory }}/dataset/test-xcalso/FeaturesDirectory/*.arff
+   rm -f {{ openSoundID_directory }}/dataset/training/FeaturesDirectory/*.arff.gz
+   rm -f {{ openSoundID_directory }}/dataset/test-xcalso/FeaturesDirectory/*.arff.gz
 fi
 
 #Remove JSON files
