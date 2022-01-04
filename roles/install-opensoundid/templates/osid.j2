@@ -148,7 +148,7 @@ cd ${ROOT_DIR}
 #compile
 if [ "${COMPILE}" = true ] ; then
    pushd  {{ openSoundID_directory }}/javasrc/Engine
-   mvn -DskipTests install -P ${MVN_PROFILE}
+   mvn -DskipTests package -Djavacpp.platform=linux-x86_64 -P ${MVN_PROFILE}
    popd
    cp {{ openSoundID_directory }}/javasrc/Engine/export/engine-1.0.0-SNAPSHOT.jar lib/
 fi
