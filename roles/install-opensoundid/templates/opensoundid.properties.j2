@@ -97,8 +97,8 @@ CNNTraining.locationToSaveModelWithoutUpdaterFileName=/home/opensoundid/model/mo
 CNNTraining.EarlyStoppingConfiguration.maxEpochsTermination=100
 CNNTraining.EarlyStoppingConfiguration.maxHour=24
 CNNTraining.EarlyStoppingConfiguration.evaluateEveryNEpochs=1
-CNNTraining.trainingBatchSize=16
-CNNTraining.testBatchSize=16
+CNNTraining.trainingBatchSize=32
+CNNTraining.testBatchSize=1
 CNNTraining.modelDirectoryName=/home/opensoundid/model
 
 #CNNClassification
@@ -132,7 +132,7 @@ CNNFeatures.subSampleArffTestMaxCount=200
 CNNFeatures.arffTestAlsoFiles={{ openSoundID_directory }}/dataset/results/testalso.arff
 CNNFeatures.subSampleArffTestAlsoFiles={{ openSoundID_directory }}/dataset/results/testalso-500.arff
 CNNFeatures.subSampleArffTestAlsoMaxCount=500
-CNNFeatures.trainingSizePct=5
+CNNFeatures.trainingSizePct=3
 
 
 #jsonToDB
