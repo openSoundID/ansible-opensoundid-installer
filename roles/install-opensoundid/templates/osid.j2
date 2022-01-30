@@ -21,7 +21,7 @@ function display_usage {
 	echo "osid -cponednn-avx2|--compile_onednn-avx2 : Compile java programs with onednn avx2 support"
 	echo "osid -cponednn-avx512|--compile_onednn-avx512 : Compile java programs with onednn avx512 support"
 	echo "osid -cpcuda-11.2|--compile_cuda-11.2 : Compile java programs with Cuda 11.2 support"
-	echo "osid -u|--updateDB : Update database"
+	echo "osid -udb|--updateDB : Update database"
 	echo "osid -t|--training : training step"
 	echo "osid -rmw|--RMWav : Remove all WAV files" 
 	exit 1
@@ -180,22 +180,24 @@ if [ "${METADATA}" = true ] ; then
 
 fi
 
-#Remove ARFF files
+#Remove ARFF and spectogramns files
 if [ "${RMARFF}" = true ] ; then
-   rm -f {{ openSoundID_directory }}/dataset/training/FeaturesDirectory/*.arff.gz
-   rm -f {{ openSoundID_directory }}/dataset/test-xcalso/FeaturesDirectory/*.arff.gz
+   find {{ openSoundID_directory }}/dataset/training/FeaturesDirectory -name "*.arff.gz" -delete
+   find {{ openSoundID_directory }}/dataset/training/spectrogramsDirectory -name "*.png" -delete
+   find {{ openSoundID_directory }}/dataset/test-xcalso/FeaturesDirectory -name "*.arff.gz" -delete
+   find {{ openSoundID_directory }}/dataset/test-xcalso/spectrogramsDirectory -name "*.png" -delete
 fi
 
 #Remove JSON files
 if [ "${RMJSON}" = true ] ; then
-   rm -f {{ openSoundID_directory }}/dataset/training/JSONDirectory/*.json
-   rm -f {{ openSoundID_directory }}/dataset/test-xcalso/JSONDirectory/*.json
+   find {{ openSoundID_directory }}/dataset/training/JSONDirectory -name "*.json" -delete
+   find {{ openSoundID_directory }}/dataset/test-xcalso/JSONDirectory -name "*.json" -delete
 fi
 
 #Remove WAV files
 if [ "${RMWAV}" = true ] ; then
-   rm -f {{ openSoundID_directory }}/dataset/training/WAVDirectory/*.wav
-   rm -f {{ openSoundID_directory }}/dataset/test-xcalso/WAVDirectory/*.wav
+   find {{ openSoundID_directory }}/dataset/training/WAVDirectory -name "*.wav" -delete
+   find {{ openSoundID_directory }}/dataset/test-xcalso/WAVDirectory -name "*.wav" -delete
 fi
 
 #Make dataset
@@ -238,8 +240,12 @@ fi
 
 #MAKE Classification
 if [ "${CLASSIFICATION}" = true ] ; then
-   cp {{ openSoundID_directory }}/dataset/results/test-200.arff {{ openSoundID_directory }}/dataset/results/testalso-500.arff $TMPDIR
-   ${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.CNNClassification --arffTestDirectory=$TMPDIR
+   cp {{ openSoundID_directory }}/dataset/results/test-200.arff $TMPDIR
+   ${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.CNNClassification --arffTestDirectory=$TMPDIR --spectrogramsDirectory={{ openSoundID_directory }}/dataset/training/spectrogramsDirectory
+   rm -f $TMPDIR/testalso-500.arff
+   
+   cp {{ openSoundID_directory }}/dataset/results/testalso-500.arff $TMPDIR
+   ${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.CNNClassification --arffTestDirectory=$TMPDIR --spectrogramsDirectory={{ openSoundID_directory }}/dataset/test-xcalso/spectrogramsDirectory
 fi
 
 if [ -f "{{ openSoundID_directory }}/logs/openSoundID.log" ] ; then

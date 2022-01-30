@@ -8,7 +8,6 @@ dsp.deltaOptimizePeakIndice=5
 dsp.peakAmplitudePercentile=30.0
 dsp.peakMinSequences=1
 dsp.melSpectraNormalisation.percentile=15.0
-dsp.spectrogramsImagePath=/home/opensoundid/dataset/spectrograms
 
 #ansible
 ansible.birds_list={{ openSoundID_directory }}/properties/birds_list.yml
@@ -46,6 +45,20 @@ ansible.essentia.PeakDetection.minPosition=20
 ansible.essentia.PeakDetection.maxPosition=21
 ansible.essentia.PeakDetection.deltaOptimizePeakIndice=50
 
+#ansible Training dataset
+ansible.rec_download_directory={{ openSoundID_directory }}/dataset/training/DownloadDirectory
+ansible.rec_wav_directory={{ openSoundID_directory }}/dataset/training/WAVDirectory
+ansible.rec_json_directory={{ openSoundID_directory }}/dataset/training/JSONDirectory
+ansible.rec_label_directory={{ openSoundID_directory }}/dataset/training/LabelDirectory
+ansible.rec_spectrograms_directory={{ openSoundID_directory }}/dataset/training/spectrogramsDirectory
+
+#ansible Also dataset
+ansible.alsodataset_rec_download_directory={{ openSoundID_directory }}/dataset/test-xcalso/DownloadDirectory
+ansible.alsodataset_rec_wav_directory={{ openSoundID_directory }}/dataset/test-xcalso/WAVDirectory
+ansible.alsodataset_rec_json_directory={{ openSoundID_directory }}/dataset/test-xcalso/JSONDirectory
+ansible.alsodataset_rec_label_directory={{ openSoundID_directory }}/dataset/test-xcalso/LabelDirectory
+ansible.alsodataset_rec_spectrograms_directory={{ openSoundID_directory }}/dataset/test-xcalso/spectrogramsDirectory
+
 #analyze
 analyze.sox.highpass=1000
 analyze.sox.normdb=-6
@@ -55,19 +68,6 @@ analyze.ffmpeg.noisevolume=0.55
 analyze.sox.denoise.level=0.4
 analyze.ffmpeg.noiseloop=999
 analyze.ffmpeg.noise_wav_file={{ openSoundID_directory }}/noises/noise.wav
-
-
-#ansible Training dataset
-ansible.rec_download_directory={{ openSoundID_directory }}/dataset/training/DownloadDirectory
-ansible.rec_wav_directory={{ openSoundID_directory }}/dataset/training/WAVDirectory
-ansible.rec_json_directory={{ openSoundID_directory }}/dataset/training/JSONDirectory
-ansible.rec_label_directory={{ openSoundID_directory }}/dataset/training/LabelDirectory
-
-#ansible Also dataset
-ansible.alsodataset_rec_download_directory={{ openSoundID_directory }}/dataset/test-xcalso/DownloadDirectory
-ansible.alsodataset_rec_wav_directory={{ openSoundID_directory }}/dataset/test-xcalso/WAVDirectory
-ansible.alsodataset_rec_json_directory={{ openSoundID_directory }}/dataset/test-xcalso/JSONDirectory
-ansible.alsodataset_rec_label_directory={{ openSoundID_directory }}/dataset/test-xcalso/LabelDirectory
 
 #SoundAnalyzer
 soundAnalyzer.recordDirectory={{ openSoundID_directory }}/soundAnalyzer/recordDirectory
@@ -88,25 +88,22 @@ ResultSender.enable=false
 ResultSender.RestUrl=http://localhost:8080/birdsongcache/rest/rest/birdsObservations
 
 #CNN Training
-CNNTraining.spectrogramsDirectory=/home/opensoundid/dataset/spectrograms
-CNNTraining.arffTrainingFiles=/home/opensoundid/dataset/results/training.arff
-CNNTraining.arffTestFiles=/home/opensoundid/dataset/results/test.arff
+CNNTraining.spectrogramsDirectory={{ openSoundID_directory }}/dataset/training/spectrogramsDirectory
+CNNTraining.arffTrainingFiles={{ openSoundID_directory }}/dataset/results/training.arff
+CNNTraining.arffTestFiles={{ openSoundID_directory }}/dataset/results/test.arff
 CNNTraining.randomSeed=1234
-CNNTraining.locationToSaveModelWithUpdaterFileName=/home/opensoundid/model/modelWithUpdater.zip
-CNNTraining.locationToSaveModelWithoutUpdaterFileName=/home/opensoundid/model/modelWithoutUpdater.zip
+CNNTraining.locationToSaveModelWithUpdaterFileName={{ openSoundID_directory }}/model/modelWithUpdater.zip
+CNNTraining.locationToSaveModelWithoutUpdaterFileName={{ openSoundID_directory }}/model/modelWithoutUpdater.zip
 CNNTraining.EarlyStoppingConfiguration.maxEpochsTermination=100
 CNNTraining.EarlyStoppingConfiguration.maxHour=24
 CNNTraining.EarlyStoppingConfiguration.evaluateEveryNEpochs=1
-CNNTraining.trainingBatchSize=32
+CNNTraining.trainingBatchSize=16
 CNNTraining.testBatchSize=1
-CNNTraining.modelDirectoryName=/home/opensoundid/model
+CNNTraining.modelDirectoryName={{ openSoundID_directory }}/model
 
 #CNNClassification
-CNNClassification.modelFileName=/home/opensoundid/model/bestGraph.bin
+CNNClassification.modelFileName={{ openSoundID_directory }}/model/bestGraph.bin
 CNNClassification.batchSize=32
-CNNClassification.spectrogramsDirectory=/home/opensoundid/dataset/spectrograms
-
-
 
 #ScoreLogger
 scoreLogger.savePath={{ openSoundID_directory }}/scoreLogger/score.csv
@@ -124,7 +121,9 @@ CNNFeatures.featuresNumber=2000
 CNNFeatures.jsonDirectory={{ openSoundID_directory }}/dataset/training/JSONDirectory
 CNNFeatures.alsoJsonDirectory={{ openSoundID_directory }}/dataset/test-xcalso/JSONDirectory
 CNNFeatures.featuresDirectory={{ openSoundID_directory }}/dataset/training/FeaturesDirectory
+CNNFeatures.SpectrogramDirectory={{ openSoundID_directory }}/dataset/training/spectrogramsDirectory
 CNNFeatures.alsoFeaturesDirectory={{ openSoundID_directory }}/dataset/test-xcalso/FeaturesDirectory
+CNNFeatures.alsoSpectrogramDirectory={{ openSoundID_directory }}/dataset/test-xcalso/spectrogramsDirectory
 CNNFeatures.arffTrainingFiles={{ openSoundID_directory }}/dataset/results/training.arff
 CNNFeatures.arffTestFiles={{ openSoundID_directory }}/dataset/results/test.arff
 CNNFeatures.subSampleArffTestFiles={{ openSoundID_directory }}/dataset/results/test-200.arff
@@ -132,7 +131,7 @@ CNNFeatures.subSampleArffTestMaxCount=200
 CNNFeatures.arffTestAlsoFiles={{ openSoundID_directory }}/dataset/results/testalso.arff
 CNNFeatures.subSampleArffTestAlsoFiles={{ openSoundID_directory }}/dataset/results/testalso-500.arff
 CNNFeatures.subSampleArffTestAlsoMaxCount=500
-CNNFeatures.trainingSizePct=2
+CNNFeatures.trainingSizePct=5
 
 
 #jsonToDB

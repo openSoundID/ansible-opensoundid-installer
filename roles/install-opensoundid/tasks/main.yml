@@ -208,14 +208,7 @@
     state: directory
     owner: opensoundid
     group: opensoundid
-
-- name: check that spectrogram directory exists
-  file:
-    path: "{{ openSoundID_directory }}/dataset/spectrograms"
-    state: directory
-    owner: opensoundid
-    group: opensoundid
-    
+ 
 - name: check that training Download directory exists
   file:
     path: "{{ openSoundID_directory }}/dataset/training/DownloadDirectory"
