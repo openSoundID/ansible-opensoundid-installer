@@ -163,7 +163,7 @@ if [ "${METADATA}" = true ] ; then
 
    
    pushd  ${ANSIBLE_DIR}/ansible-retrieve-metadata
-   ansible-playbook playbook-retrieve-metadata.yml -e root_dir=${ROOT_DIR}
+   ansible-playbook playbook-retrieve-metadata.yml -c local -e root_dir=${ROOT_DIR}
    popd
 
    #populate database
@@ -205,12 +205,12 @@ if [ "${MAKEDATASET}" = true ] ; then
  
    #download wave file and make dataset for training dataset
    pushd  ${ANSIBLE_DIR}/ansible-make-datasets
-   ansible-playbook playbook-make-training-datasets.yml -e root_dir=${ROOT_DIR}
+   ansible-playbook playbook-make-training-datasets.yml -c local -e root_dir=${ROOT_DIR}
    popd
 
    #download wave file and make dataset file for test dataset
    pushd  ${ANSIBLE_DIR}/ansible-make-datasets
-   ansible-playbook playbook-make-test-datasets.yml -e root_dir=${ROOT_DIR}
+   ansible-playbook playbook-make-test-datasets.yml -c local -e root_dir=${ROOT_DIR}
    popd
 
 fi
@@ -242,7 +242,7 @@ fi
 if [ "${CLASSIFICATION}" = true ] ; then
    cp {{ openSoundID_directory }}/dataset/results/test-200.arff $TMPDIR
    ${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.CNNClassification --arffTestDirectory=$TMPDIR --spectrogramsDirectory={{ openSoundID_directory }}/dataset/training/spectrogramsDirectory
-   rm -f $TMPDIR/testalso-500.arff
+   rm -f $TMPDIR/*.arff
    
    cp {{ openSoundID_directory }}/dataset/results/testalso-500.arff $TMPDIR
    ${JAVA_HOME}/bin/java -Xmx16g -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.CNNClassification --arffTestDirectory=$TMPDIR --spectrogramsDirectory={{ openSoundID_directory }}/dataset/test-xcalso/spectrogramsDirectory
