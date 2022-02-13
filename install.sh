@@ -1,8 +1,8 @@
 #!/bin/bash
 
 function display_usage { 
-	echo "install.sh -local | install opensoundid on local host"  
-	echo "install.sh -remote hostname username| install opensoundid on remote host: hostname with ssh user username"
+	echo "sudo ./install.sh -local | install opensoundid on local host"  
+	echo "sudo ./install.sh -remote hostname username| install opensoundid on remote host: hostname with ssh user username"
         echo "install.sh -h| help on install.sh"
 	exit 1
 }

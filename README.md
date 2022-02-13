@@ -7,5 +7,6 @@
 
 `cd ansible-opensoundid-installer`
 
-`sudo ./install.sh`
+`sudo ./install.sh -local | install opensoundid on local host`
+`sudo ./install.sh -remote hostname username`
 
