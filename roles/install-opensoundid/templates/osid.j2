@@ -24,7 +24,7 @@ function display_usage {
 	echo "osid -udb|--updateDB : Update database"
 	echo "osid -t|--training : training step"
 	echo "osid -rmw|--RMWav : Remove all WAV files" 
-	exit 1
+	exit 0
 } 
 
 if [ "$#" -lt 1 ]; then
@@ -140,9 +140,6 @@ TMPDIR=$(mktemp -d);
 ROOT_DIR={{ openSoundID_directory }}/
 ANSIBLE_DIR={{ openSoundID_directory }}/ansible
 
-RESULT_DIR={{ openSoundID_directory }}/results/$(date '+%Y-%m-%d-%H:%M:%S')
-mkdir -p ${RESULT_DIR}
-
 cd ${ROOT_DIR}
 
 #compile
@@ -151,12 +148,17 @@ if [ "${COMPILE}" = true ] ; then
    mvn -DskipTests package -Djavacpp.platform=linux-x86_64 -P ${MVN_PROFILE}
    popd
    cp {{ openSoundID_directory }}/javasrc/Engine/export/engine-1.0.0-SNAPSHOT.jar lib/
+   exit 0
 fi
 
 #create database
 if [ "${CREATEDATABASE}" = true ] ; then
    ./bin/createDatabase.sh
+   exit 0
 fi
+
+RESULT_DIR={{ openSoundID_directory }}/results/$(date '+%Y-%m-%d-%H:%M:%S')
+mkdir -p ${RESULT_DIR}
 
 #download metadata and make database file
 if [ "${METADATA}" = true ] ; then

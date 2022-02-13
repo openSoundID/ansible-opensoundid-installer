@@ -246,6 +246,13 @@
     state: directory
     owner: opensoundid
     group: opensoundid
+    
+- name: check that test-xcalso spectrograms directory exists
+  file:
+    path: "{{ openSoundID_directory }}/dataset/training/spectrogramsDirectory"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
 
 - name: check that training noises directory exists
   file:
@@ -278,6 +285,13 @@
 - name: check that test-xcalso Label  directory exists
   file:
     path: "{{ openSoundID_directory }}/dataset/test-xcalso/LabelDirectory"
+    state: directory
+    owner: opensoundid
+    group: opensoundid
+    
+- name: check that test-xcalso spectrograms directory exists
+  file:
+    path: "{{ openSoundID_directory }}/dataset/test-xcalso/spectrogramsDirectory"
     state: directory
     owner: opensoundid
     group: opensoundid
