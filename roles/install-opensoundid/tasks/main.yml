@@ -56,6 +56,16 @@
   yum:
     name: maven
     state: latest
+    
+- name: Install the latest version of git (for remote installation)
+  yum:
+    name: git
+    state: latest
+
+- name: Install the latest version of ansible (for remote installation)
+  yum:
+    name: ansible
+    state: latest    
 
 - name: Install the latest version of ffmpeg
   dnf:
