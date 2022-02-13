@@ -4,10 +4,16 @@ function getProperties {
     grep "${1}" /home/opensoundid/properties/opensoundid.properties|cut -d'=' -f2
 }
 
-function display_usage { 
-	echo "analyze.sh -i inputAudioFile -t YYYYmmddHHMM -w true -d true" 
-	exit 1
-} 
+function display_usage {
+        echo "usage:"
+        echo "analyze.sh -i inputAudioFile -t YYYYmmddHHMM -w true -d true" 
+        echo "-i inputAudioFile name of the audio file to analyze must be a wav file"
+        echo "-t give a date/time to the audio file"
+        echo "-w true|false wait or not for result"
+        echo "-d true|false delete result file"
+        exit 1
+}
+
 
 waitForResult=true
 deleteResultFile=true
@@ -33,6 +39,16 @@ filenameWithExtension=$(basename -- "${inputFile}")
 extension="${filenameWithExtension##*.}"
 filename="${filenameWithExtension%.*}"
 
+function display_usage {
+        echo "usage:"
+        echo "analyze.sh -i inputAudioFile -t YYYYmmddHHMM -w true -d true" 
+        echo "-i inputAudioFile name of the audio file to analyze must be a wav file"
+        echo "-t give a date/time to the audio file"
+        echo "-w true|false wait or not for result"
+        echo "-d true|false delete result file"
+        exit 1
+}
+
 cp ${inputFile} ${TMPDIR}/${filenameWithExtension}
 /usr/bin/sox -R ${TMPDIR}/${filenameWithExtension} -r $(getProperties 'analyze.sox.rate') -c 1 -b $(getProperties 'analyze.sox.bitsnumber') ${TMPDIR}/${filename}-mono.wav highpass $(getProperties 'analyze.sox.highpass') norm $(getProperties 'analyze.sox.normdb') 1> /dev/null 2>&1
 ${ROOT_DIR}/bin/extractnoise.py ${TMPDIR}/${filename}-mono.wav ${TMPDIR}/${filename}-noise.wav 1> /dev/null 2>&1
@@ -51,11 +67,13 @@ if [ "${waitForResult}" = true ]; then
    cat $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt
    rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt
    rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.json
+   rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}-*.png
 fi
 
 if [ "${deleteResultFile}" = true ]; then
    rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.txt
    rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}.json
+   rm -f $(getProperties 'soundAnalyzer.recordDirectory')/${filename}-*.png
 fi
 
 rm -rf ${TMPDIR}

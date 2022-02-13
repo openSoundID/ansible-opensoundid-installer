@@ -22,4 +22,5 @@ update RECORD set ENABLED=FALSE where RMK like '%12_0 Hz%';
 update RECORD set ENABLED=FALSE where RMK like '%11_0Hz%';
 update RECORD set ENABLED=FALSE where RMK like '%11_0 Hz%';
 update RECORD set ENABLED=FALSE where RMK like '%noise%';
+update RECORD set ENABLED=FALSE where LENGTH < '0:06';
 

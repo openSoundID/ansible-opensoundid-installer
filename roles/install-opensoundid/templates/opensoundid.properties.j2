@@ -15,11 +15,11 @@ ansible.metadataRepository={{ openSoundID_directory }}/metadataRepository
 ansible.populateSQLFile={{ openSoundID_directory }}/database/populate_birds.sql
 
 ansible.mp3towav.sox.highpass=1000
-ansible.mp3towav.sox.normdb=-6
+ansible.mp3towav.sox.normdb=-12
 ansible.mp3towav.sox.rate=16000
 ansible.mp3towav.sox.bitsnumber=16
 ansible.mp3towav.ffmpeg.noisevolume=0.55
-ansible.mp3towav.sox.denoise.level=0.4
+ansible.mp3towav.sox.denoise.level=0.3
 ansible.mp3towav.ffmpeg.noiseloop=999
 ansible.mp3towav.ffmpeg.noise_wav_file={{ openSoundID_directory }}/noises/noise.wav
 ansible.essentia.windowtype=hann
@@ -61,11 +61,11 @@ ansible.alsodataset_rec_spectrograms_directory={{ openSoundID_directory }}/datas
 
 #analyze
 analyze.sox.highpass=1000
-analyze.sox.normdb=-6
+analyze.sox.normdb=-12
 analyze.sox.rate=16000
 analyze.sox.bitsnumber=16
 analyze.ffmpeg.noisevolume=0.55
-analyze.sox.denoise.level=0.4
+analyze.sox.denoise.level=0.3
 analyze.ffmpeg.noiseloop=999
 analyze.ffmpeg.noise_wav_file={{ openSoundID_directory }}/noises/noise.wav
 
@@ -95,7 +95,7 @@ CNNTraining.randomSeed=1234
 CNNTraining.locationToSaveModelWithUpdaterFileName={{ openSoundID_directory }}/model/modelWithUpdater.zip
 CNNTraining.locationToSaveModelWithoutUpdaterFileName={{ openSoundID_directory }}/model/modelWithoutUpdater.zip
 CNNTraining.EarlyStoppingConfiguration.maxEpochsTermination=100
-CNNTraining.EarlyStoppingConfiguration.maxHour=24
+CNNTraining.EarlyStoppingConfiguration.maxHour=240
 CNNTraining.EarlyStoppingConfiguration.evaluateEveryNEpochs=1
 CNNTraining.trainingBatchSize=16
 CNNTraining.testBatchSize=1
