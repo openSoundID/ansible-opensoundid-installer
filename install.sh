@@ -36,7 +36,7 @@ fi
 
 if [ "${LOCAL}" = true ] ; then
    echo "local install"
-   ansible-playbook -c local playbook-opensoundid-installer.yml
+   ansible-playbook --connection=local --inventory 127.0.0.1, playbook-opensoundid-installer.yml
 fi
 
 if [ "${LOCAL}" = false ] ; then
