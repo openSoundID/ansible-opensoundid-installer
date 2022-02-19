@@ -163,6 +163,8 @@ mkdir -p ${RESULT_DIR}
 #download metadata and make database file
 if [ "${METADATA}" = true ] ; then
 
+   #delete old xeno-canto metadata 
+   rm -rf {{ openSoundID_directory }}/metadataRepository/* 
    
    pushd  ${ANSIBLE_DIR}/ansible-retrieve-metadata
    ansible-playbook playbook-retrieve-metadata.yml -c local -e root_dir=${ROOT_DIR}
@@ -204,7 +206,7 @@ fi
 
 #Make dataset
 if [ "${MAKEDATASET}" = true ] ; then
- 
+
    #download wave file and make dataset for training dataset
    pushd  ${ANSIBLE_DIR}/ansible-make-datasets
    ansible-playbook playbook-make-training-datasets.yml -c local -e root_dir=${ROOT_DIR}
