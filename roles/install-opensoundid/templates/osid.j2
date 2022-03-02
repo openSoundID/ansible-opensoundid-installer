@@ -239,7 +239,7 @@ fi
 
 #CNN Training
 if [ "${TRAINING}" = true ] ; then
-   ${JAVA_HOME}/bin/java -Xmx16g -Dorg.bytedeco.javacpp.maxbytes=22G -Dorg.bytedeco.javacpp.maxphysicalbytes=24G -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.CNNTraining -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.CNNTraining
+   ${JAVA_HOME}/bin/java -Xms1048m -Xmx4096m -Dorg.bytedeco.javacpp.maxbytes=24G -Dorg.bytedeco.javacpp.maxphysicalbytes=24G -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.CNNTraining -classpath "lib/engine-1.0.0-SNAPSHOT.jar:properties" org.opensoundid.ml.CNNTraining
 fi
 
 #MAKE Classification
